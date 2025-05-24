@@ -26,14 +26,14 @@ const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       isScrolled 
-        ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
-        : 'bg-white/90 backdrop-blur-sm'
+        ? 'bg-gray-50/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
+        : 'bg-gray-50/90 backdrop-blur-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
+            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
               EURO VISION 2000
             </h1>
           </div>
@@ -70,19 +70,19 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-white/95 backdrop-blur-md rounded-lg mt-2 shadow-lg animate-fade-in border border-gray-200">
+          <div className="lg:hidden bg-gray-50/95 backdrop-blur-md rounded-lg mt-2 shadow-lg animate-fade-in border border-gray-200">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {menuItems.map((item, index) => (
                 <a
                   key={index}
                   href="#"
-                  className="text-gray-700 hover:text-gray-900 block px-4 py-3 text-base font-medium transition-colors duration-300 rounded-lg hover:bg-gray-50"
+                  className="text-gray-700 hover:text-gray-900 block px-4 py-3 text-base font-medium transition-colors duration-300 rounded-lg hover:bg-gray-100"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item}
                 </a>
               ))}
-              <button className="text-gray-700 hover:text-gray-900 flex items-center px-4 py-3 text-base font-medium w-full text-left rounded-lg hover:bg-gray-50 transition-colors duration-300">
+              <button className="text-gray-700 hover:text-gray-900 flex items-center px-4 py-3 text-base font-medium w-full text-left rounded-lg hover:bg-gray-100 transition-colors duration-300">
                 <Search size={20} className="mr-3" />
                 Search
               </button>
