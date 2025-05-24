@@ -1,6 +1,7 @@
 
 import React from 'react';
 import Navbar from '@/components/Navbar';
+import AnimatedBackground from '@/components/AnimatedBackground';
 import Hero from '@/components/Hero';
 import AboutSection from '@/components/AboutSection';
 import LeadershipSection from '@/components/LeadershipSection';
@@ -11,7 +12,8 @@ import Footer from '@/components/Footer';
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-slate-900 relative">
+      <AnimatedBackground />
       <Navbar />
       <Hero />
       <AboutSection />
