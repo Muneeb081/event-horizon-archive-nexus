@@ -8,11 +8,11 @@ const LeadershipSection = () => {
       description: "Syed Yousaf Raza Gillani, Prime Minister of Pakistan."
     },
     {
-      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/us2.jpg",
+      image: "https://postimg.cc/D8HzS1Z0",
       description: "H.E Richard G. Olson, Ambassador of the United States of America."
     },
     {
-      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/5x7.jpg",
+      image: "https://postimg.cc/KRRzc0mC",
       description: "His Excellency, Alfredo Leoni, Ambassador of Brazil."
     },
     {
@@ -42,31 +42,35 @@ const LeadershipSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-100 relative overflow-hidden">
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-gray-200/50 to-transparent rounded-full transform -translate-x-48 translate-y-48"></div>
+    <section className="py-20 bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-gray-200/50 to-transparent dark:from-gray-700/50 rounded-full transform -translate-x-48 translate-y-48 animate-pulse"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+        <div className="text-center mb-16 animate-fade-in">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mb-6">
             European Leadership Excellence
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Meet the distinguished leaders who guide our organization towards continued cultural preservation and innovation across Europe.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {leaders.map((leader, index) => (
-            <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
+            <div 
+              key={index} 
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 group transform hover:scale-105 animate-fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="aspect-square overflow-hidden">
                 <img 
                   src={leader.image}
                   alt="Leadership"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
               <div className="p-6">
-                <p className="text-gray-700 leading-relaxed">{leader.description}</p>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{leader.description}</p>
               </div>
             </div>
           ))}
