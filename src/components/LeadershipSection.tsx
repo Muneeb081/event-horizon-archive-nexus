@@ -2,9 +2,47 @@
 import React from 'react';
 
 const LeadershipSection = () => {
+  const leaders = [
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/pp1.jpg",
+      description: "Syed Yousaf Raza Gillani, Prime Minister of Pakistan."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/us2.jpg",
+      description: "H.E Richard G. Olson, Ambassador of the United States of America."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/5x7.jpg",
+      description: "His Excellency, Alfredo Leoni, Ambassador of Brazil."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/governor.jpg",
+      description: "S.M Muneer Patron-in-Chief, Iftikhar Ali Malik Chairman UBG - Mian Muhammad Adress President FPCCI - Governor KPK."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/DSC04721.jpg",
+      description: "S.M Muneer, Patron-in-Chief UBG - Chief Executive, Trade Development Authority of Pakistan."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/DSC04571.jpg",
+      description: "Mian Muhammad Idress, President, The Federation of Pakistan Chambers of Commerce & Industry."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2018/07/18-1-1.jpg",
+      description: "His Excellency Joao Paulo Sabido Costa, Ambassador of Portugal."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2018/07/9.jpg",
+      description: "H.E Barrister Syed Ali Zafar, Caretaker Federal Minister for Information, Broadcasting, Parliamentary Affairs, Law & Justice."
+    },
+    {
+      image: "http://www.eurovision2000.org/wp-content/uploads/2018/07/36524143_2128860224066145_6711410927175991296_n.jpg",
+      description: "Distinguished Leadership"
+    }
+  ];
+
   return (
-    <section className="py-20 bg-gray-50 relative overflow-hidden">
-      {/* Background decoration */}
+    <section className="py-20 bg-gray-100 relative overflow-hidden">
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-gray-200/50 to-transparent rounded-full transform -translate-x-48 translate-y-48"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -17,51 +55,21 @@ const LeadershipSection = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-200">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <div className="w-48 h-48 mx-auto lg:mx-0 mb-6 bg-gradient-to-br from-gray-300 to-gray-500 rounded-full flex items-center justify-center shadow-lg">
-                <div className="w-44 h-44 bg-white rounded-full flex items-center justify-center">
-                  <div className="text-6xl font-bold text-gray-700">CS</div>
-                </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {leaders.map((leader, index) => (
+            <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group">
+              <div className="aspect-square overflow-hidden">
+                <img 
+                  src={leader.image}
+                  alt="Leadership"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">Chairman FPCCI S C</h3>
-              <p className="text-gray-600 font-semibold mb-4">Chief Cultural Executive</p>
-              <div className="flex justify-center lg:justify-start space-x-4">
-                <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
+              <div className="p-6">
+                <p className="text-gray-700 leading-relaxed">{leader.description}</p>
               </div>
             </div>
-
-            <div className="space-y-6">
-              <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">Leadership Philosophy</h4>
-                <p className="text-gray-600">
-                  "Leading with cultural vision, historical integrity, and a commitment to European excellence. 
-                  Our organization thrives on collaborative leadership and innovative approaches to heritage preservation."
-                </p>
-              </div>
-
-              <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-200">
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">Key Achievements</h4>
-                <ul className="space-y-2 text-gray-600">
-                  <li className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-                    <span>Enhanced cultural preservation efficiency by 45%</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
-                    <span>Expanded European heritage documentation</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-                    <span>Established strategic international cultural partnerships</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

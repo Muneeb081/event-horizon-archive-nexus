@@ -4,9 +4,8 @@ import { Mail, Phone, MapPin, Calendar, Archive, Users, Gem } from 'lucide-react
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-gray-800 to-gray-900 text-white relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-gray-700/20 to-gray-600/20 rounded-full transform -translate-x-48 -translate-y-48"></div>
+    <footer className="bg-gradient-to-br from-gray-700 to-gray-800 text-white relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-gray-600/20 to-gray-500/20 rounded-full transform -translate-x-48 -translate-y-48"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -76,9 +75,9 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-700 mt-12 pt-8 text-center">
+        <div className="border-t border-gray-600 mt-12 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 EURO VISION 2000. All rights reserved.
+            Designed by ZeroxCoding | Powered by M&N's
           </p>
         </div>
       </div>

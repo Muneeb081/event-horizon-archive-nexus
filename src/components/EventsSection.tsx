@@ -1,28 +1,46 @@
 
 import React from 'react';
-import { Calendar, Clock, MapPin, Users } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Bell, Star } from 'lucide-react';
 
 const EventsSection = () => {
-  const events = [
+  const announcements = [
+    {
+      title: "New Cultural Heritage Initiative",
+      date: "March 15, 2024",
+      description: "Announcing the launch of our comprehensive European cultural heritage preservation program."
+    },
+    {
+      title: "Partnership with International Museums",
+      date: "March 10, 2024", 
+      description: "Proud to announce strategic partnerships with leading museums across Europe for cultural exchange."
+    },
+    {
+      title: "Annual Awards Ceremony",
+      date: "February 28, 2024",
+      description: "Celebrating outstanding contributions to European cultural preservation and heritage documentation."
+    }
+  ];
+
+  const upcomingEvents = [
     {
       title: "European Cultural Summit",
-      date: "March 15, 2024",
+      date: "April 15, 2024",
       time: "9:00 AM - 5:00 PM",
       location: "Vienna Convention Center",
       attendees: 350,
       type: "Summit"
     },
     {
-      title: "Heritage Gem Exhibition",
-      date: "April 22, 2024",
-      time: "10:00 AM - 8:00 PM",
+      title: "Heritage Documentation Workshop",
+      date: "May 22, 2024",
+      time: "10:00 AM - 4:00 PM",
       location: "European Heritage Hall",
-      attendees: 600,
-      type: "Exhibition"
+      attendees: 150,
+      type: "Workshop"
     },
     {
       title: "Cultural Leaders Network",
-      date: "May 10, 2024",
+      date: "June 10, 2024",
       time: "6:00 PM - 9:00 PM",
       location: "Grand Cultural Center",
       attendees: 200,
@@ -32,65 +50,100 @@ const EventsSection = () => {
 
   return (
     <section className="py-20 bg-white relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-gray-100/50 to-transparent rounded-full transform translate-x-48 -translate-y-48"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-            Upcoming Cultural Events
+            Events & Announcements
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Stay connected with our latest cultural events, heritage exhibitions, and community gatherings designed to foster European cultural growth and collaboration.
+            Stay updated with our latest announcements and upcoming cultural events.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.map((event, index) => (
-            <div
-              key={index}
-              className="bg-gray-50 rounded-2xl shadow-xl border border-gray-200 p-6 hover:shadow-2xl hover:scale-105 transition-all duration-500 group"
-            >
-              <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-gradient-to-r from-gray-200 to-gray-300 text-gray-700 text-sm font-medium rounded-full">
-                  {event.type}
-                </span>
-              </div>
-              
-              <h3 className="text-xl font-bold text-gray-800 mb-4 group-hover:text-gray-900 transition-colors duration-300">
-                {event.title}
-              </h3>
+        {/* Announcements Section */}
+        <div className="mb-16">
+          <div className="flex items-center justify-center mb-8">
+            <Bell className="w-8 h-8 text-gray-600 mr-3" />
+            <h3 className="text-3xl font-bold text-gray-800">Announcements</h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {announcements.map((announcement, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 group"
+              >
+                <div className="mb-4">
+                  <span className="inline-block px-3 py-1 bg-gradient-to-r from-blue-200 to-blue-300 text-blue-800 text-sm font-medium rounded-full">
+                    Announcement
+                  </span>
+                </div>
+                
+                <h4 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                  {announcement.title}
+                </h4>
 
-              <div className="space-y-3 text-gray-600">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 mb-4">
                   <Calendar className="w-5 h-5 text-gray-500" />
-                  <span>{event.date}</span>
+                  <span className="text-gray-600">{announcement.date}</span>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Clock className="w-5 h-5 text-gray-600" />
-                  <span>{event.time}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <MapPin className="w-5 h-5 text-gray-700" />
-                  <span>{event.location}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Users className="w-5 h-5 text-gray-500" />
-                  <span>{event.attendees} Expected Attendees</span>
-                </div>
-              </div>
 
-              <button className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 hover:from-gray-600 hover:to-gray-800">
-                Register Now
-              </button>
-            </div>
-          ))}
+                <p className="text-gray-700 leading-relaxed">{announcement.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="text-center mt-12">
-          <button className="px-8 py-4 border-2 border-gray-400 text-gray-700 font-semibold rounded-full hover:bg-gray-50 hover:border-gray-500 transition-all duration-300 hover:shadow-lg">
-            View Full Calendar
-          </button>
+        {/* Upcoming Events Section */}
+        <div>
+          <div className="flex items-center justify-center mb-8">
+            <Star className="w-8 h-8 text-gray-600 mr-3" />
+            <h3 className="text-3xl font-bold text-gray-800">Upcoming Events</h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {upcomingEvents.map((event, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 group"
+              >
+                <div className="mb-4">
+                  <span className="inline-block px-3 py-1 bg-gradient-to-r from-green-200 to-green-300 text-green-800 text-sm font-medium rounded-full">
+                    {event.type}
+                  </span>
+                </div>
+                
+                <h4 className="text-xl font-bold text-gray-800 mb-4 group-hover:text-green-600 transition-colors duration-300">
+                  {event.title}
+                </h4>
+
+                <div className="space-y-3 text-gray-600">
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="w-5 h-5 text-gray-500" />
+                    <span>{event.date}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Clock className="w-5 h-5 text-gray-500" />
+                    <span>{event.time}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <MapPin className="w-5 h-5 text-gray-500" />
+                    <span>{event.location}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Users className="w-5 h-5 text-gray-500" />
+                    <span>{event.attendees} Expected Attendees</span>
+                  </div>
+                </div>
+
+                <button className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                  Register Now
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

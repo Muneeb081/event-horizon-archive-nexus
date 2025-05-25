@@ -1,18 +1,99 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Archive, Users, Eye, Globe, Award } from 'lucide-react';
 
 const Hero = () => {
+  const [currentPakistanSlide, setCurrentPakistanSlide] = useState(0);
+  const [currentHotelSlide, setCurrentHotelSlide] = useState(0);
+
+  const pakistanPavilionImages = [
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/Pan1-2.jpg",
+      description: "PAKISTAN PAVILION - Showcasing Pakistani culture and heritage at international exhibitions"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/1558532_378202995691113_9057766392115673844_n.jpg",
+      description: "Pakistan Pavilion Exhibition Display"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/10483858_378203062357773_4360643402593847385_n.jpg",
+      description: "Pakistan Pavilion Interactive Section"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/P2.jpg",
+      description: "Pakistan Pavilion Cultural Showcase"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/P1-1.jpg",
+      description: "Pakistan Pavilion Main Entrance"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/P3-3.jpg",
+      description: "Pakistan Pavilion Exhibition Hall"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/Pic-of-Pakistan-Booth.jpg",
+      description: "Pakistan Booth Overview"
+    }
+  ];
+
+  const hotelShowImages = [
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/logo.png",
+      heading: "Hotel Show"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0015.jpg",
+      heading: "Exhibitor Hotel Show"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0019.jpg",
+      heading: "Exhibitor Hotel Show"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0058-1.jpg",
+      heading: "Exhibitor Hotel Show"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180411-WA0023.jpg",
+      heading: "Exhibitor Hotel Show"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0026.jpg",
+      heading: "Exhibitor Hotel Show"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/22528237_10154895551787478_347286391236017277_n.jpg",
+      heading: "High Point Market Week Fall North Carolina 16 - 20 October 2021 USA"
+    },
+    {
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/JaNY-logo.png",
+      heading: "JA New York Show 24 - 26 October 2021"
+    }
+  ];
+
+  useEffect(() => {
+    const pakistanInterval = setInterval(() => {
+      setCurrentPakistanSlide((prev) => (prev + 1) % pakistanPavilionImages.length);
+    }, 4000);
+
+    const hotelInterval = setInterval(() => {
+      setCurrentHotelSlide((prev) => (prev + 1) % hotelShowImages.length);
+    }, 5000);
+
+    return () => {
+      clearInterval(pakistanInterval);
+      clearInterval(hotelInterval);
+    };
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-50">
-      {/* Animated Background Elements */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-100">
+      {/* Background Elements */}
       <div className="absolute inset-0">
-        {/* Floating geometric shapes */}
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-gray-200/30 to-gray-300/30 rounded-full animate-pulse"></div>
         <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-gradient-to-br from-gray-300/25 to-gray-400/25 rounded-full animate-pulse delay-1000"></div>
         <div className="absolute bottom-1/4 left-1/3 w-56 h-56 bg-gradient-to-br from-gray-100/35 to-gray-250/35 rounded-full animate-pulse delay-2000"></div>
-        
-        {/* Moving gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-100/20 to-transparent animate-pulse"></div>
       </div>
 
@@ -33,13 +114,60 @@ const Hero = () => {
             leadership showcase, and community engagement initiatives since 2000.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
-            <button className="px-10 py-4 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:from-gray-600 hover:to-gray-800">
-              Explore Heritage
-            </button>
-            <button className="px-10 py-4 border-2 border-gray-400 text-gray-700 font-semibold rounded-full hover:bg-gray-50 hover:border-gray-500 transition-all duration-300 hover:shadow-lg">
-              View Archives
-            </button>
+          {/* Pakistan Pavilion Slider */}
+          <div className="mb-16 bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200/50">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">PAKISTAN PAVILION</h2>
+            <div className="relative h-96 rounded-2xl overflow-hidden">
+              <img 
+                src={pakistanPavilionImages[currentPakistanSlide].url}
+                alt="Pakistan Pavilion"
+                className="w-full h-full object-cover transition-all duration-1000 ease-in-out"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                <p className="text-white text-lg font-medium">
+                  {pakistanPavilionImages[currentPakistanSlide].description}
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-center mt-4 space-x-2">
+              {pakistanPavilionImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPakistanSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentPakistanSlide ? 'bg-gray-700' : 'bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Hotel Show Slider */}
+          <div className="mb-16 bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200/50">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">HOTEL SHOW & EXHIBITOR</h2>
+            <div className="relative h-96 rounded-2xl overflow-hidden">
+              <img 
+                src={hotelShowImages[currentHotelSlide].url}
+                alt="Hotel Show"
+                className="w-full h-full object-cover transition-all duration-1000 ease-in-out"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                <h3 className="text-white text-xl font-semibold">
+                  {hotelShowImages[currentHotelSlide].heading}
+                </h3>
+              </div>
+            </div>
+            <div className="flex justify-center mt-4 space-x-2">
+              {hotelShowImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentHotelSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentHotelSlide ? 'bg-gray-700' : 'bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Enhanced feature cards */}
