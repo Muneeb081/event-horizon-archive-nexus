@@ -67,15 +67,15 @@ const GemStonesSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-100 relative overflow-hidden">
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-yellow-100/30 to-transparent rounded-full transform -translate-x-48 translate-y-48"></div>
+    <section className="py-20 bg-gray-100 dark:bg-gray-800 relative overflow-hidden transition-all duration-500">
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-yellow-100/30 dark:from-yellow-900/20 to-transparent rounded-full transform -translate-x-48 translate-y-48"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mb-6 transition-colors duration-500">
             Precious Gem Stones Collection
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-500">
             Discover our curated collection of exceptional gemstones, each with unique properties 
             and origins that showcase nature's extraordinary artistry and geological wonders.
           </p>
@@ -85,7 +85,7 @@ const GemStonesSection = () => {
           {gemstones.map((gem, index) => (
             <div
               key={index}
-              className="group bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-500"
+              className="group bg-white dark:bg-gray-700 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-500"
             >
               <div className="relative h-48 overflow-hidden">
                 <img 
@@ -99,27 +99,27 @@ const GemStonesSection = () => {
               </div>
               
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                   {gem.name}
                 </h3>
 
                 <div className="space-y-2 mb-4">
-                  <p className="text-gray-600">
-                    <span className="font-medium text-gray-700">Origin:</span> {gem.origin}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <span className="font-medium text-gray-700 dark:text-gray-200">Origin:</span> {gem.origin}
                   </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium text-gray-700">Rarity:</span> {gem.rarity}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <span className="font-medium text-gray-700 dark:text-gray-200">Rarity:</span> {gem.rarity}
                   </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium text-gray-700">Price Range:</span> {gem.price}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <span className="font-medium text-gray-700 dark:text-gray-200">Price Range:</span> {gem.price}
                   </p>
                 </div>
 
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">
                   {gem.description}
                 </p>
 
-                <button className="w-full px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-medium rounded-lg hover:shadow-lg transition-all duration-300">
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-600 dark:to-gray-800 text-white font-medium rounded-lg hover:shadow-lg transition-all duration-300">
                   View Details
                 </button>
               </div>

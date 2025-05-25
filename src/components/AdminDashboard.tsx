@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { Bell, Calendar, Gem, Plus, Edit, Trash2, LogOut, Save, X, Upload } from 'lucide-react';
+import { Bell, Calendar, Gem, Plus, Edit, Trash2, LogOut, Save, X, Upload, Moon, Sun } from 'lucide-react';
+import { useTheme } from './ThemeProvider';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -34,32 +34,47 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const [activeTab, setActiveTab] = useState('announcements');
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const { theme, toggleTheme } = useTheme();
 
-  // Enhanced sample data with real-time sync
-  const [announcements, setAnnouncements] = useState<Announcement[]>([
-    { id: 1, title: 'New Cultural Heritage Initiative', date: '2024-03-15', description: 'Announcing our new program for cultural preservation' },
-    { id: 2, title: 'Partnership with International Museums', date: '2024-03-10', description: 'Strategic partnerships with leading cultural institutions' },
-    { id: 3, title: 'Digital Archive Launch', date: '2024-03-20', description: 'Launch of our comprehensive digital heritage archive' }
-  ]);
+  // Load data from localStorage or use defaults
+  const [announcements, setAnnouncements] = useState<Announcement[]>(() => {
+    const saved = localStorage.getItem('admin-announcements');
+    return saved ? JSON.parse(saved) : [
+      { id: 1, title: 'New Cultural Heritage Initiative', date: '2024-03-15', description: 'Announcing our new program for cultural preservation' },
+      { id: 2, title: 'Partnership with International Museums', date: '2024-03-10', description: 'Strategic partnerships with leading cultural institutions' },
+      { id: 3, title: 'Digital Archive Launch', date: '2024-03-20', description: 'Launch of our comprehensive digital heritage archive' }
+    ];
+  });
 
-  const [events, setEvents] = useState<Event[]>([
-    { id: 1, name: 'European Cultural Summit 2024', date: '2024-04-15', time: '09:00', description: 'Annual summit bringing together cultural leaders from across Europe' },
-    { id: 2, name: 'Heritage Documentation Workshop', date: '2024-05-22', time: '10:00', description: 'Professional workshop on modern documentation techniques' },
-    { id: 3, name: 'International Trade Fair', date: '2024-06-10', time: '14:00', description: 'Showcasing European craftsmanship and cultural products' }
-  ]);
+  const [events, setEvents] = useState<Event[]>(() => {
+    const saved = localStorage.getItem('admin-events');
+    return saved ? JSON.parse(saved) : [
+      { id: 1, name: 'European Cultural Summit 2024', date: '2024-04-15', time: '09:00', description: 'Annual summit bringing together cultural leaders from across Europe' },
+      { id: 2, name: 'Heritage Documentation Workshop', date: '2024-05-22', time: '10:00', description: 'Professional workshop on modern documentation techniques' },
+      { id: 3, name: 'International Trade Fair', date: '2024-06-10', time: '14:00', description: 'Showcasing European craftsmanship and cultural products' }
+    ];
+  });
 
-  const [gemstones, setGemstones] = useState<Gemstone[]>([
-    { id: 1, name: 'Royal Sapphire Collection', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', price: '$15,000', category: 'Precious', description: 'Exquisite royal blue sapphires from Kashmir' },
-    { id: 2, name: 'Colombian Emerald Set', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400', price: '$8,000', category: 'Precious', description: 'Premium quality emeralds with exceptional clarity' },
-    { id: 3, name: 'Pink Diamond Collection', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400', price: '$25,000', category: 'Rare', description: 'Rare pink diamonds with certified authenticity' },
-    { id: 4, name: 'Tanzanite Crystal', image: 'https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=400', price: '$3,500', category: 'Semi-Precious', description: 'Beautiful blue-purple tanzanite crystals' }
-  ]);
+  const [gemstones, setGemstones] = useState<Gemstone[]>(() => {
+    const saved = localStorage.getItem('admin-gemstones');
+    return saved ? JSON.parse(saved) : [
+      { id: 1, name: 'Royal Sapphire Collection', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400', price: '$15,000', category: 'Precious', description: 'Exquisite royal blue sapphires from Kashmir' },
+      { id: 2, name: 'Colombian Emerald Set', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400', price: '$8,000', category: 'Precious', description: 'Premium quality emeralds with exceptional clarity' },
+      { id: 3, name: 'Pink Diamond Collection', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400', price: '$25,000', category: 'Rare', description: 'Rare pink diamonds with certified authenticity' },
+      { id: 4, name: 'Tanzanite Crystal', image: 'https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=400', price: '$3,500', category: 'Semi-Precious', description: 'Beautiful blue-purple tanzanite crystals' }
+    ];
+  });
 
-  // Sync data to localStorage for persistence
+  // Save data to localStorage whenever state changes
   useEffect(() => {
-    localStorage.setItem('announcements', JSON.stringify(announcements));
-    localStorage.setItem('events', JSON.stringify(events));
-    localStorage.setItem('gemstones', JSON.stringify(gemstones));
+    localStorage.setItem('admin-announcements', JSON.stringify(announcements));
+    localStorage.setItem('admin-events', JSON.stringify(events));
+    localStorage.setItem('admin-gemstones', JSON.stringify(gemstones));
+    
+    // Trigger a custom event to notify main website of data changes
+    window.dispatchEvent(new CustomEvent('adminDataUpdate', {
+      detail: { announcements, events, gemstones }
+    }));
   }, [announcements, events, gemstones]);
 
   const handleEdit = (item: any, type: string) => {
@@ -130,13 +145,33 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
                 Admin Dashboard
               </h1>
             </div>
-            <button
-              onClick={onLogout}
-              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={toggleTheme}
+                className="relative p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300"
+                aria-label="Toggle theme"
+              >
+                <div className="relative w-6 h-6">
+                  <Sun 
+                    className={`absolute inset-0 w-6 h-6 text-gray-600 dark:text-gray-400 transition-all duration-300 ${
+                      theme === 'light' ? 'rotate-0 scale-100' : 'rotate-90 scale-0'
+                    }`} 
+                  />
+                  <Moon 
+                    className={`absolute inset-0 w-6 h-6 text-gray-600 dark:text-gray-400 transition-all duration-300 ${
+                      theme === 'dark' ? 'rotate-0 scale-100' : '-rotate-90 scale-0'
+                    }`} 
+                  />
+                </div>
+              </button>
+              <button
+                onClick={onLogout}
+                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

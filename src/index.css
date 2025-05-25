@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,4 +99,55 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Performance optimizations for smooth animations */
+  * {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  img {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  
+  .animate-fade-in,
+  .animate-pulse,
+  .hover\\:scale-105,
+  .hover\\:scale-110,
+  .group-hover\\:scale-105,
+  .group-hover\\:scale-110 {
+    will-change: transform, opacity;
+  }
+}
+
+/* Enhanced animations for better performance */
+@keyframes smoothSlide {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes smoothFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.smooth-slide {
+  animation: smoothSlide 0.7s ease-out;
+}
+
+.smooth-fade-in {
+  animation: smoothFadeIn 0.6s ease-out;
 }
