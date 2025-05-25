@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Archive, Users, Eye, Globe, Award } from 'lucide-react';
 
 const Hero = () => {
   const [currentPakistanSlide, setCurrentPakistanSlide] = useState(0);
@@ -175,58 +174,6 @@ const Hero = () => {
                 />
               ))}
             </div>
-          </div>
-
-          {/* Enhanced feature cards */}
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8 mt-20">
-            {[
-              { 
-                icon: Calendar, 
-                title: "Cultural Events", 
-                desc: "Comprehensive European cultural event planning and documentation",
-                color: "from-blue-500 to-blue-700 dark:from-blue-400 dark:to-blue-600"
-              },
-              { 
-                icon: Archive, 
-                title: "Heritage Archives", 
-                desc: "Detailed preservation of European cultural heritage and traditions",
-                color: "from-purple-500 to-purple-700 dark:from-purple-400 dark:to-purple-600"
-              },
-              { 
-                icon: Users, 
-                title: "Leadership Network", 
-                desc: "Connecting European cultural leaders and governance networks",
-                color: "from-green-500 to-green-700 dark:from-green-400 dark:to-green-600"
-              }
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-500 border border-gray-200/50 dark:border-gray-700/50 group"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <div className={`w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br ${feature.color} rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-lg`}>
-                  <feature.icon className="w-6 h-6 md:w-8 md:h-8 text-white" />
-                </div>
-                <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Enhanced statistics section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mt-16 md:mt-20 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-gray-200/50 dark:border-gray-700/50">
-            {[
-              { icon: Eye, number: "25K+", label: "Events Documented" },
-              { icon: Globe, number: "15", label: "Countries Connected" },
-              { icon: Award, number: "500+", label: "Cultural Leaders" },
-              { icon: Archive, number: "24", label: "Years of Heritage" }
-            ].map((stat, index) => (
-              <div key={index} className="text-center group">
-                <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-gray-600 dark:text-gray-400 mx-auto mb-3 group-hover:scale-110 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-all duration-300" />
-                <div className="text-xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1 group-hover:scale-110 transition-transform duration-300">{stat.number}</div>
-                <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400 font-medium">{stat.label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </div>

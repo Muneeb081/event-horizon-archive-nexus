@@ -1,7 +1,10 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const LeadershipSection = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const leaders = [
     {
       image: "http://www.eurovision2000.org/wp-content/uploads/2015/08/pp1.jpg",
@@ -41,6 +44,22 @@ const LeadershipSection = () => {
     }
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % leaders.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [leaders.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % leaders.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + leaders.length) % leaders.length);
+  };
+
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-gray-200/50 to-transparent dark:from-gray-700/50 rounded-full transform -translate-x-48 translate-y-48 animate-pulse"></div>
@@ -55,25 +74,54 @@ const LeadershipSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {leaders.map((leader, index) => (
-            <div 
-              key={index} 
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 group transform hover:scale-105 animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="aspect-square overflow-hidden">
-                <img 
-                  src={leader.image}
-                  alt="Leadership"
-                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-6">
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{leader.description}</p>
+        <div className="relative max-w-4xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+            <div className="relative h-96 md:h-[500px]">
+              <img 
+                src={leaders[currentSlide].image}
+                alt="Leadership"
+                className="w-full h-full object-cover object-center transition-all duration-1000 ease-in-out"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+              
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+              
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+
+              {/* Description */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                <p className="text-white text-lg md:text-xl font-medium leading-relaxed">
+                  {leaders[currentSlide].description}
+                </p>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Slide Indicators */}
+          <div className="flex justify-center mt-6 space-x-2">
+            {leaders.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
+                  index === currentSlide 
+                    ? 'bg-gray-700 dark:bg-gray-300 scale-110' 
+                    : 'bg-gray-400 dark:bg-gray-600'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
