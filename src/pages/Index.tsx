@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import AboutSection from '@/components/AboutSection';
 import LeadershipSection from '@/components/LeadershipSection';
+import HotelShowSection from '@/components/HotelShowSection';
 import EventsSection from '@/components/EventsSection';
 import GemStonesSection from '@/components/GemStonesSection';
 import ContactSection from '@/components/ContactSection';
@@ -21,6 +22,9 @@ const Index = () => {
       </div>
       <div id="leadership">
         <LeadershipSection />
+      </div>
+      <div id="hotel-show">
+        <HotelShowSection />
       </div>
       <div id="events">
         <EventsSection />

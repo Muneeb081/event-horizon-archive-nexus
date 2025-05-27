@@ -14,17 +14,6 @@ const Footer = () => {
               Preserving European cultural heritage through comprehensive event documentation, 
               leadership showcase, and community engagement initiatives.
             </p>
-            <div className="flex space-x-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors duration-300 cursor-pointer">
-                <span className="text-white text-sm font-bold">f</span>
-              </div>
-              <div className="w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-300 transition-colors duration-300 cursor-pointer">
-                <span className="text-white text-sm font-bold">t</span>
-              </div>
-              <div className="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors duration-300 cursor-pointer">
-                <span className="text-white text-sm font-bold">in</span>
-              </div>
-            </div>
           </div>
           
           <div>
@@ -40,9 +29,9 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4 text-gray-100">Contact Info</h4>
             <div className="space-y-2 text-gray-300">
-              <p>Email: info@eurovision2000.org</p>
-              <p>Phone: +92 123 456 7890</p>
-              <p>Address: Karachi, Pakistan</p>
+              <p>Email: eurovsn@gmail.com</p>
+              <p>Phone: +92 335 9494167</p>
+              <p>Address: Attock, Pakistan</p>
             </div>
           </div>
         </div>

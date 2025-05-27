@@ -62,24 +62,6 @@ const ContactSection = () => {
                 </div>
               </div>
             </div>
-
-            <div className="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 rounded-2xl p-8 border border-indigo-200 dark:border-indigo-700">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Office Hours</h3>
-              <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <div className="flex justify-between">
-                  <span>Monday - Friday</span>
-                  <span>9:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday</span>
-                  <span>10:00 AM - 4:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sunday</span>
-                  <span>Closed</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Contact Form */}

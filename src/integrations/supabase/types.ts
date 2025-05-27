@@ -9,7 +9,96 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      announcements: {
+        Row: {
+          created_at: string | null
+          date: string
+          description: string
+          id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          description: string
+          id?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          description?: string
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          date: string
+          description: string
+          id: string
+          name: string
+          time: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          description: string
+          id?: string
+          name: string
+          time: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          description?: string
+          id?: string
+          name?: string
+          time?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      gemstones: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          image: string
+          name: string
+          price: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image: string
+          name: string
+          price: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image?: string
+          name?: string
+          price?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
