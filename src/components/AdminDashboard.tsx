@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Bell, Calendar, Gem, Plus, Edit, Trash2, LogOut, Save, X, Moon, Sun } from 'lucide-react';
+import { Bell, Calendar, Gem, Plus, Edit, Trash2, LogOut, Save, X, Moon, Sun, Upload } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -14,6 +13,7 @@ interface Announcement {
   title: string;
   date: string;
   description: string;
+  image?: string;
 }
 
 interface Event {
@@ -22,6 +22,7 @@ interface Event {
   date: string;
   time: string;
   description: string;
+  image?: string;
 }
 
 interface Gemstone {
@@ -38,6 +39,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { toast } = useToast();
 
@@ -45,7 +47,6 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [gemstones, setGemstones] = useState<Gemstone[]>([]);
 
-  // Fetch data from Supabase
   const fetchAnnouncements = async () => {
     const { data, error } = await supabase.from('announcements').select('*').order('date', { ascending: false });
     if (error) {
@@ -79,6 +80,40 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
     fetchGemstones();
   }, []);
 
+  const handleImageUpload = async (file: File, type: string) => {
+    if (!file) return null;
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      return new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          setUploading(false);
+          resolve(reader.result as string);
+        };
+        reader.onerror = () => {
+          setUploading(false);
+          reject(new Error('Failed to read file'));
+        };
+        reader.readAsDataURL(file);
+      });
+    } catch (error) {
+      setUploading(false);
+      toast({ title: "Error", description: "Failed to upload image", variant: "destructive" });
+      return null;
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = await handleImageUpload(file, editingItem?.type);
+      if (imageUrl) {
+        setEditingItem({ ...editingItem, [field]: imageUrl });
+      }
+    }
+  };
+
   const handleEdit = (item: any, type: string) => {
     setEditingItem({ ...item, type });
     setIsEditing(true);
@@ -96,7 +131,8 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             .update({
               title: editingItem.title,
               description: editingItem.description,
-              date: editingItem.date
+              date: editingItem.date,
+              image: editingItem.image
             })
             .eq('id', editingItem.id);
           if (error) throw error;
@@ -106,7 +142,8 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
             .insert({
               title: editingItem.title,
               description: editingItem.description,
-              date: editingItem.date
+              date: editingItem.date,
+              image: editingItem.image
             });
           if (error) throw error;
         }
@@ -119,7 +156,8 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               name: editingItem.name,
               description: editingItem.description,
               date: editingItem.date,
-              time: editingItem.time
+              time: editingItem.time,
+              image: editingItem.image
             })
             .eq('id', editingItem.id);
           if (error) throw error;
@@ -130,7 +168,8 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               name: editingItem.name,
               description: editingItem.description,
               date: editingItem.date,
-              time: editingItem.time
+              time: editingItem.time,
+              image: editingItem.image
             });
           if (error) throw error;
         }
@@ -202,9 +241,9 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
 
   const handleAdd = (type: string) => {
     if (type === 'announcement') {
-      setEditingItem({ type, title: '', date: '', description: '' });
+      setEditingItem({ type, title: '', date: '', description: '', image: '' });
     } else if (type === 'event') {
-      setEditingItem({ type, name: '', date: '', time: '', description: '' });
+      setEditingItem({ type, name: '', date: '', time: '', description: '', image: '' });
     } else if (type === 'gemstone') {
       setEditingItem({ type, name: '', image: '', price: '', category: '', description: '' });
     }
@@ -213,7 +252,6 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-all duration-500">
-      {/* Enhanced Header */}
       <header className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-xl border-b border-slate-200/50 dark:border-slate-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
@@ -260,7 +298,6 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Enhanced Tab Navigation */}
         <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl shadow-2xl mb-8 border border-slate-200/50 dark:border-slate-700/50">
           <div className="border-b border-slate-200/50 dark:border-slate-700/50">
             <nav className="flex space-x-8 px-8">
@@ -286,7 +323,6 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
           </div>
         </div>
 
-        {/* Enhanced Content Area */}
         <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
           <div className="p-8">
             <div className="flex justify-between items-center mb-8">
@@ -301,16 +337,24 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               </button>
             </div>
 
-            {/* Announcements Tab */}
             {activeTab === 'announcements' && (
               <div className="grid gap-6">
                 {announcements.map((announcement) => (
                   <div key={announcement.id} className="bg-gradient-to-r from-white to-blue-50 dark:from-slate-700 dark:to-slate-600 border border-slate-200 dark:border-slate-600 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
                     <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 text-xl">{announcement.title}</h3>
-                        <p className="text-sm text-blue-600 dark:text-blue-400 mb-4 font-medium">{announcement.date}</p>
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{announcement.description}</p>
+                      <div className="flex space-x-6 flex-1">
+                        {announcement.image && (
+                          <img 
+                            src={announcement.image} 
+                            alt={announcement.title}
+                            className="w-24 h-24 object-cover rounded-2xl shadow-lg"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 text-xl">{announcement.title}</h3>
+                          <p className="text-sm text-blue-600 dark:text-blue-400 mb-4 font-medium">{announcement.date}</p>
+                          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{announcement.description}</p>
+                        </div>
                       </div>
                       <div className="flex space-x-3 ml-6">
                         <button
@@ -334,16 +378,24 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               </div>
             )}
 
-            {/* Events Tab */}
             {activeTab === 'events' && (
               <div className="grid gap-6">
                 {events.map((event) => (
                   <div key={event.id} className="bg-gradient-to-r from-white to-green-50 dark:from-slate-700 dark:to-slate-600 border border-slate-200 dark:border-slate-600 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
                     <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 text-xl">{event.name}</h3>
-                        <p className="text-sm text-green-600 dark:text-green-400 mb-4 font-medium">{event.date} at {event.time}</p>
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{event.description}</p>
+                      <div className="flex space-x-6 flex-1">
+                        {event.image && (
+                          <img 
+                            src={event.image} 
+                            alt={event.name}
+                            className="w-24 h-24 object-cover rounded-2xl shadow-lg"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 text-xl">{event.name}</h3>
+                          <p className="text-sm text-green-600 dark:text-green-400 mb-4 font-medium">{event.date} at {event.time}</p>
+                          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{event.description}</p>
+                        </div>
                       </div>
                       <div className="flex space-x-3 ml-6">
                         <button
@@ -367,7 +419,6 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               </div>
             )}
 
-            {/* Enhanced Gemstones Tab */}
             {activeTab === 'gemstones' && (
               <div className="grid gap-6">
                 {gemstones.map((gemstone) => (
@@ -411,7 +462,6 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
         </div>
       </div>
 
-      {/* Enhanced Edit Modal */}
       {isEditing && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-lg w-full transform animate-scale-in border border-slate-200/50 dark:border-slate-700/50">
@@ -443,6 +493,31 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
                     onChange={(e) => setEditingItem({ ...editingItem, date: e.target.value })}
                     className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
                   />
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Upload Image (Optional)
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, 'image')}
+                        className="hidden"
+                        id="announcement-image"
+                        disabled={uploading}
+                      />
+                      <label
+                        htmlFor="announcement-image"
+                        className="flex items-center space-x-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors duration-300"
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span>{uploading ? 'Uploading...' : 'Choose Image'}</span>
+                      </label>
+                      {editingItem.image && (
+                        <img src={editingItem.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
+                      )}
+                    </div>
+                  </div>
                   <textarea
                     placeholder="Description"
                     value={editingItem.description || ''}
@@ -474,6 +549,31 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
                     onChange={(e) => setEditingItem({ ...editingItem, time: e.target.value })}
                     className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
                   />
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Upload Image (Optional)
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, 'image')}
+                        className="hidden"
+                        id="event-image"
+                        disabled={uploading}
+                      />
+                      <label
+                        htmlFor="event-image"
+                        className="flex items-center space-x-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors duration-300"
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span>{uploading ? 'Uploading...' : 'Choose Image'}</span>
+                      </label>
+                      {editingItem.image && (
+                        <img src={editingItem.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
+                      )}
+                    </div>
+                  </div>
                   <textarea
                     placeholder="Description"
                     value={editingItem.description || ''}
@@ -493,13 +593,31 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
                     onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
                     className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
                   />
-                  <input
-                    type="text"
-                    placeholder="Image URL"
-                    value={editingItem.image || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, image: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Upload Image
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, 'image')}
+                        className="hidden"
+                        id="gemstone-image"
+                        disabled={uploading}
+                      />
+                      <label
+                        htmlFor="gemstone-image"
+                        className="flex items-center space-x-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors duration-300"
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span>{uploading ? 'Uploading...' : 'Choose Image'}</span>
+                      </label>
+                      {editingItem.image && (
+                        <img src={editingItem.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
+                      )}
+                    </div>
+                  </div>
                   <input
                     type="text"
                     placeholder="Price (e.g., $5,000)"
@@ -538,7 +656,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               </button>
               <button
                 onClick={handleSave}
-                disabled={loading}
+                disabled={loading || uploading}
                 className="flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-medium disabled:opacity-50"
               >
                 <Save className="w-5 h-5" />
