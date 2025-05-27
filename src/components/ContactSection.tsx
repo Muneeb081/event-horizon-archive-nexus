@@ -34,8 +34,7 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-gray-100">Email</h4>
-                    <p className="text-gray-600 dark:text-gray-300">info@eventhorizon.org</p>
-                    <p className="text-gray-600 dark:text-gray-300">events@eventhorizon.org</p>
+                    <p className="text-gray-600 dark:text-gray-300">eurovsn@gmail.com</p>
                   </div>
                 </div>
 
@@ -45,8 +44,7 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-gray-100">Phone</h4>
-                    <p className="text-gray-600 dark:text-gray-300">+1 (555) 123-4567</p>
-                    <p className="text-gray-600 dark:text-gray-300">+1 (555) 987-6543</p>
+                    <p className="text-gray-600 dark:text-gray-300">+92 335 9494167</p>
                   </div>
                 </div>
 
@@ -57,9 +55,8 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-gray-100">Address</h4>
                     <p className="text-gray-600 dark:text-gray-300">
-                      123 Professional Plaza<br />
-                      Business District<br />
-                      City, State 12345
+                      F-114, MADNI ROAD<br />
+                      ATTOCK CITY – PAKISTAN
                     </p>
                   </div>
                 </div>

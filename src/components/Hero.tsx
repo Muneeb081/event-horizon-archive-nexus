@@ -1,10 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 
 const Hero = () => {
   const [currentPakistanSlide, setCurrentPakistanSlide] = useState(0);
   const [currentHotelSlide, setCurrentHotelSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isHotelTransitioning, setIsHotelTransitioning] = useState(false);
+  const [isPakistanTransitioning, setIsPakistanTransitioning] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -41,9 +43,49 @@ const Hero = () => {
     }
   ];
 
+  // Custom Hotel Show component for themed images
+  const HotelShowImage = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+    <div className={`relative w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-purple-800 ${className}`}>
+      <div className="text-center text-white p-8">
+        {children}
+      </div>
+    </div>
+  );
+
+  const HighPointMarketImage = ({ className = "" }: { className?: string }) => (
+    <div className={`relative w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-700 to-blue-900 ${className}`}>
+      <div className="text-center text-white p-8">
+        <div className="bg-orange-600 text-white px-4 py-2 rounded mb-4 inline-block font-bold">
+          HPMKT
+        </div>
+        <h3 className="text-4xl font-bold mb-4">High Point Market</h3>
+        <p className="text-xl mb-2">Week Fall North Carolina</p>
+        <p className="text-lg">16 - 20 October 2021 USA</p>
+      </div>
+    </div>
+  );
+
+  const JANewYorkImage = ({ className = "" }: { className?: string }) => (
+    <div className={`relative w-full h-full flex items-center justify-center bg-gradient-to-br from-green-500 to-green-700 ${className}`}>
+      <div className="text-center text-white p-8">
+        <div className="bg-gray-800 text-white px-6 py-3 rounded mb-4 inline-block">
+          <span className="text-2xl font-bold">JA</span>
+          <span className="text-lg ml-2">NewYork</span>
+        </div>
+        <h3 className="text-2xl font-bold mb-2">JA New York Show</h3>
+        <p className="text-lg">24 - 26 October 2021</p>
+      </div>
+    </div>
+  );
+
   const hotelShowImages = [
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/logo.png",
+      component: () => (
+        <HotelShowImage>
+          <h2 className="text-4xl font-bold mb-4">Hotel Show</h2>
+          <p className="text-lg">Saudi Arabia</p>
+        </HotelShowImage>
+      ),
       heading: "Hotel Show"
     },
     {
@@ -67,36 +109,40 @@ const Hero = () => {
       heading: "Exhibitor Hotel Show"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/22528237_10154895551787478_347286391236017277_n.jpg",
+      component: () => <HighPointMarketImage />,
       heading: "High Point Market Week Fall North Carolina 16 - 20 October 2021 USA"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/JaNY-logo.png",
+      component: () => <JANewYorkImage />,
       heading: "JA New York Show 24 - 26 October 2021"
     }
   ];
 
-  const handleSlideChange = (newSlide: number, type: 'pakistan' | 'hotel') => {
-    setIsTransitioning(true);
+  const handlePakistanSlideChange = (newSlide: number) => {
+    setIsPakistanTransitioning(true);
     setTimeout(() => {
-      if (type === 'pakistan') {
-        setCurrentPakistanSlide(newSlide);
-      } else {
-        setCurrentHotelSlide(newSlide);
-      }
-      setIsTransitioning(false);
+      setCurrentPakistanSlide(newSlide);
+      setIsPakistanTransitioning(false);
+    }, 150);
+  };
+
+  const handleHotelSlideChange = (newSlide: number) => {
+    setIsHotelTransitioning(true);
+    setTimeout(() => {
+      setCurrentHotelSlide(newSlide);
+      setIsHotelTransitioning(false);
     }, 150);
   };
 
   useEffect(() => {
     const pakistanInterval = setInterval(() => {
       const nextSlide = (currentPakistanSlide + 1) % pakistanPavilionImages.length;
-      handleSlideChange(nextSlide, 'pakistan');
+      handlePakistanSlideChange(nextSlide);
     }, 4000);
 
     const hotelInterval = setInterval(() => {
       const nextSlide = (currentHotelSlide + 1) % hotelShowImages.length;
-      handleSlideChange(nextSlide, 'hotel');
+      handleHotelSlideChange(nextSlide);
     }, 5000);
 
     return () => {
@@ -117,19 +163,19 @@ const Hero = () => {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="mb-10 transform hover:scale-105 transition-transform duration-500">
-            <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mb-4 tracking-tight animate-fade-in">
+          <div className="mb-8 transform hover:scale-105 transition-transform duration-500">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-3 tracking-tight animate-fade-in">
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 dark:from-blue-400 dark:via-purple-400 dark:to-blue-600 bg-clip-text text-transparent">
                 EURO VISION
               </span>
-              <span className="block text-xl md:text-2xl bg-gradient-to-r from-gray-600 to-gray-800 dark:from-gray-300 dark:to-gray-500 bg-clip-text text-transparent mt-2 font-semibold animate-fade-in delay-300">
+              <span className="block text-lg md:text-xl bg-gradient-to-r from-gray-600 to-gray-800 dark:from-gray-300 dark:to-gray-500 bg-clip-text text-transparent mt-2 font-semibold animate-fade-in delay-300">
                 2000
               </span>
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 dark:from-blue-400 dark:via-purple-400 dark:to-blue-600 mx-auto rounded-full animate-pulse shadow-lg"></div>
+            <div className="w-20 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 dark:from-blue-400 dark:via-purple-400 dark:to-blue-600 mx-auto rounded-full animate-pulse shadow-lg"></div>
           </div>
           
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed font-light animate-fade-in delay-500 transform hover:scale-105 transition-transform duration-300">
+          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed font-light animate-fade-in delay-500 transform hover:scale-105 transition-transform duration-300">
             Preserving European cultural heritage through comprehensive event documentation, 
             leadership showcase, and community engagement initiatives since 2000.
           </p>
@@ -147,7 +193,7 @@ const Hero = () => {
                   src={pakistanPavilionImages[currentPakistanSlide].url}
                   alt="Pakistan Pavilion"
                   className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out transform ${
-                    isTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
+                    isPakistanTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
                   } group-hover:scale-105`}
                 />
               </div>
@@ -162,7 +208,7 @@ const Hero = () => {
               {pakistanPavilionImages.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => handleSlideChange(index, 'pakistan')}
+                  onClick={() => handlePakistanSlideChange(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 transform shadow-md ${
                     index === currentPakistanSlide 
                       ? 'bg-gradient-to-r from-green-600 to-blue-600 scale-110 shadow-lg' 
@@ -182,26 +228,38 @@ const Hero = () => {
             </h2>
             <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden group shadow-xl">
               <div className="relative w-full h-full">
-                <img 
-                  src={hotelShowImages[currentHotelSlide].url}
-                  alt="Hotel Show"
-                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out transform ${
-                    isTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
-                  } group-hover:scale-105`}
-                />
+                {hotelShowImages[currentHotelSlide].component ? (
+                  <div className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out transform ${
+                    isHotelTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
+                  } group-hover:scale-105`}>
+                    {hotelShowImages[currentHotelSlide].component()}
+                  </div>
+                ) : (
+                  <img 
+                    src={hotelShowImages[currentHotelSlide].url}
+                    alt="Hotel Show"
+                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out transform ${
+                      isHotelTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
+                    } group-hover:scale-105`}
+                  />
+                )}
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                <h3 className="text-white text-lg md:text-xl font-bold shadow-lg">
-                  {hotelShowImages[currentHotelSlide].heading}
-                </h3>
-              </div>
+              {!hotelShowImages[currentHotelSlide].component && (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                    <h3 className="text-white text-lg md:text-xl font-bold shadow-lg">
+                      {hotelShowImages[currentHotelSlide].heading}
+                    </h3>
+                  </div>
+                </>
+              )}
             </div>
             <div className="flex justify-center mt-4 space-x-2">
               {hotelShowImages.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => handleSlideChange(index, 'hotel')}
+                  onClick={() => handleHotelSlideChange(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 transform shadow-md ${
                     index === currentHotelSlide 
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 scale-110 shadow-lg' 
