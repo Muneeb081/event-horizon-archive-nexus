@@ -9,6 +9,7 @@ interface Announcement {
   title: string;
   date: string;
   description: string;
+  image?: string;
 }
 
 interface Event {
@@ -17,6 +18,7 @@ interface Event {
   date: string;
   time: string;
   description: string;
+  image?: string;
 }
 
 interface Gemstone {
@@ -98,6 +100,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           title: formData.title || '',
           date: formData.date,
           description: formData.description,
+          image: formData.image || null,
         };
 
         if (editingId) {
@@ -116,6 +119,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           date: formData.date,
           time: formData.time || '',
           description: formData.description,
+          image: formData.image || null,
         };
 
         if (editingId) {
@@ -168,6 +172,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         title: announcement.title,
         date: announcement.date,
         description: announcement.description,
+        image: announcement.image || '',
       });
     } else if (activeTab === 'events') {
       const event = item as Event;
@@ -176,6 +181,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         date: event.date,
         time: event.time,
         description: event.description,
+        image: (event as any).image || '',
       });
     } else if (activeTab === 'gemstones') {
       const gemstone = item as Gemstone;
@@ -296,34 +302,35 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                <Image className="w-4 h-4 inline mr-1" />
-                Image URL
-              </label>
-              <input
-                type="url"
-                value={formData.image || ''}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-                placeholder="https://example.com/image.jpg"
-                required
-              />
-              {formData.image && (
-                <div className="mt-2">
-                  <img 
-                    src={formData.image} 
-                    alt="Preview" 
-                    className="w-32 h-32 object-cover rounded-md border border-gray-300 dark:border-gray-600"
-                    onError={(e) => {
-                      e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"%3E%3Crect width="128" height="128" fill="%23f0f0f0"/%3E%3Ctext x="64" y="64" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="12" fill="%23999"%3EInvalid Image%3C/text%3E%3C/svg%3E';
-                    }}
-                  />
-                </div>
-              )}
-            </div>
           </>
         )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <Image className="w-4 h-4 inline mr-1" />
+            Image URL
+          </label>
+          <input
+            type="url"
+            value={formData.image || ''}
+            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            placeholder="https://example.com/image.jpg"
+            required={activeTab === 'gemstones'}
+          />
+          {formData.image && (
+            <div className="mt-2">
+              <img 
+                src={formData.image} 
+                alt="Preview" 
+                className="w-32 h-32 object-cover rounded-md border border-gray-300 dark:border-gray-600"
+                onError={(e) => {
+                  e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"%3E%3Crect width="128" height="128" fill="%23f0f0f0"/%3E%3Ctext x="64" y="64" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="12" fill="%23999"%3EInvalid Image%3C/text%3E%3C/svg%3E';
+                }}
+              />
+            </div>
+          )}
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -406,6 +413,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         }}
                       />
                     )}
+                  </div>
+                )}
+                {/* Show image preview for announcements and events */}
+                {(activeTab === 'announcements' || activeTab === 'events') && (item as any).image && (
+                  <div className="mt-2">
+                    <img 
+                      src={(item as any).image} 
+                      alt="Preview"
+                      className="w-16 h-16 object-cover rounded border border-gray-300 dark:border-gray-600"
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" fill="%23f0f0f0"/%3E%3Ctext x="32" y="32" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="10" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+                      }}
+                    />
                   </div>
                 )}
                 <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">

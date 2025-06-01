@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { MapPin, Phone, Mail, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const ContactSection = () => {
@@ -91,7 +91,7 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Phone</h4>
-                    <p className="text-gray-600 dark:text-gray-300">+92 (XXX) XXX-XXXX</p>
+                    <p className="text-gray-600 dark:text-gray-300">+92 57 2602404</p>
                   </div>
                 </div>
 
@@ -102,17 +102,6 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Email</h4>
                     <p className="text-gray-600 dark:text-gray-300">info@eurovision2000.org</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-1">Business Hours</h4>
-                    <p className="text-gray-600 dark:text-gray-300">Monday - Friday: 9:00 AM - 6:00 PM</p>
-                    <p className="text-gray-600 dark:text-gray-300">Saturday: 10:00 AM - 4:00 PM</p>
                   </div>
                 </div>
               </div>

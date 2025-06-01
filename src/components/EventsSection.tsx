@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, Users, Bell, Star } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Bell, Star, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import EventRegistrationForm from './EventRegistrationForm';
 
@@ -153,7 +154,17 @@ const EventsSection = () => {
                       <span className="text-gray-600 dark:text-gray-300">{new Date(announcement.date).toLocaleDateString()}</span>
                     </div>
 
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{announcement.description}</p>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 line-clamp-3">
+                      {announcement.description}
+                    </p>
+
+                    <Link 
+                      to={`/announcement/${announcement.id}`}
+                      className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors duration-300"
+                    >
+                      <span>Read More</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 ))}
               </div>
