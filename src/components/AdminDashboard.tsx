@@ -1,20 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Bell, Calendar, Gem, Plus, Edit, Trash2, LogOut, Save, X, Moon, Sun, Upload } from 'lucide-react';
-import { useTheme } from './ThemeProvider';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-
-interface AdminDashboardProps {
-  onLogout: () => void;
-}
+import { Button } from '@/components/ui/button';
+import { Plus, Edit, Trash2, LogOut, Calendar, Bell, Gem, Image } from 'lucide-react';
 
 interface Announcement {
   id: string;
   title: string;
   date: string;
   description: string;
-  image?: string;
 }
 
 interface Event {
@@ -23,665 +17,489 @@ interface Event {
   date: string;
   time: string;
   description: string;
-  image?: string;
 }
 
 interface Gemstone {
   id: string;
   name: string;
-  image: string;
-  price: string;
   category: string;
+  price: string;
+  image: string;
   description?: string;
 }
 
-const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
-  const [activeTab, setActiveTab] = useState('announcements');
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const { theme, toggleTheme } = useTheme();
-  const { toast } = useToast();
+interface AdminDashboardProps {
+  onLogout: () => void;
+}
 
+type FormData = {
+  title?: string;
+  name?: string;
+  date: string;
+  time?: string;
+  description: string;
+  category?: string;
+  price?: string;
+  image?: string;
+};
+
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
+  const [activeTab, setActiveTab] = useState<'announcements' | 'events' | 'gemstones'>('announcements');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [gemstones, setGemstones] = useState<Gemstone[]>([]);
-
-  const fetchAnnouncements = async () => {
-    const { data, error } = await supabase.from('announcements').select('*').order('date', { ascending: false });
-    if (error) {
-      console.error('Error fetching announcements:', error);
-      toast({ title: "Error", description: "Failed to fetch announcements", variant: "destructive" });
-    } else {
-      setAnnouncements(data || []);
-    }
-  };
-
-  const fetchEvents = async () => {
-    const { data, error } = await supabase.from('events').select('*').order('date', { ascending: false });
-    if (error) {
-      console.error('Error fetching events:', error);
-      toast({ title: "Error", description: "Failed to fetch events", variant: "destructive" });
-    } else {
-      setEvents(data || []);
-    }
-  };
-
-  const fetchGemstones = async () => {
-    const { data, error } = await supabase.from('gemstones').select('*').order('created_at', { ascending: false });
-    if (error) {
-      console.error('Error fetching gemstones:', error);
-      toast({ title: "Error", description: "Failed to fetch gemstones", variant: "destructive" });
-    } else {
-      setGemstones(data || []);
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formData, setFormData] = useState<FormData>({
+    date: '',
+    description: '',
+  });
 
   useEffect(() => {
-    fetchAnnouncements();
-    fetchEvents();
-    fetchGemstones();
+    fetchData();
   }, []);
 
-  const handleImageUpload = async (file: File) => {
-    if (!file) return null;
-
-    setUploading(true);
+  const fetchData = async () => {
     try {
-      const reader = new FileReader();
-      return new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          setUploading(false);
-          resolve(reader.result as string);
+      const [announcementsRes, eventsRes, gemstonesRes] = await Promise.all([
+        supabase.from('announcements').select('*').order('created_at', { ascending: false }),
+        supabase.from('events').select('*').order('created_at', { ascending: false }),
+        supabase.from('gemstones').select('*').order('created_at', { ascending: false })
+      ]);
+
+      setAnnouncements(announcementsRes.data || []);
+      setEvents(eventsRes.data || []);
+      setGemstones(gemstonesRes.data || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      date: '',
+      description: '',
+    });
+    setEditingId(null);
+    setShowForm(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      let result;
+      
+      if (activeTab === 'announcements') {
+        const announcementData = {
+          title: formData.title || '',
+          date: formData.date,
+          description: formData.description,
         };
-        reader.onerror = () => {
-          setUploading(false);
-          reject(new Error('Failed to read file'));
+
+        if (editingId) {
+          result = await supabase
+            .from('announcements')
+            .update(announcementData)
+            .eq('id', editingId);
+        } else {
+          result = await supabase
+            .from('announcements')
+            .insert([announcementData]);
+        }
+      } else if (activeTab === 'events') {
+        const eventData = {
+          name: formData.name || '',
+          date: formData.date,
+          time: formData.time || '',
+          description: formData.description,
         };
-        reader.readAsDataURL(file);
+
+        if (editingId) {
+          result = await supabase
+            .from('events')
+            .update(eventData)
+            .eq('id', editingId);
+        } else {
+          result = await supabase
+            .from('events')
+            .insert([eventData]);
+        }
+      } else if (activeTab === 'gemstones') {
+        const gemstoneData = {
+          name: formData.name || '',
+          category: formData.category || '',
+          price: formData.price || '',
+          image: formData.image || '',
+          description: formData.description,
+        };
+
+        if (editingId) {
+          result = await supabase
+            .from('gemstones')
+            .update(gemstoneData)
+            .eq('id', editingId);
+        } else {
+          result = await supabase
+            .from('gemstones')
+            .insert([gemstoneData]);
+        }
+      }
+
+      if (result?.error) {
+        throw result.error;
+      }
+
+      resetForm();
+      fetchData();
+    } catch (error) {
+      console.error('Error saving item:', error);
+      alert('Failed to save item. Please try again.');
+    }
+  };
+
+  const handleEdit = (item: Announcement | Event | Gemstone) => {
+    if (activeTab === 'announcements') {
+      const announcement = item as Announcement;
+      setFormData({
+        title: announcement.title,
+        date: announcement.date,
+        description: announcement.description,
       });
-    } catch (error) {
-      setUploading(false);
-      console.error('Image upload error:', error);
-      toast({ title: "Error", description: "Failed to upload image", variant: "destructive" });
-      return null;
+    } else if (activeTab === 'events') {
+      const event = item as Event;
+      setFormData({
+        name: event.name,
+        date: event.date,
+        time: event.time,
+        description: event.description,
+      });
+    } else if (activeTab === 'gemstones') {
+      const gemstone = item as Gemstone;
+      setFormData({
+        name: gemstone.name,
+        category: gemstone.category,
+        price: gemstone.price,
+        image: gemstone.image,
+        description: gemstone.description || '',
+        date: '',
+      });
     }
+    setEditingId(item.id);
+    setShowForm(true);
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = await handleImageUpload(file);
-      if (imageUrl) {
-        setEditingItem({ ...editingItem, [field]: imageUrl });
-      }
-    }
-  };
-
-  const handleEdit = (item: any, type: string) => {
-    setEditingItem({ ...item, type });
-    setIsEditing(true);
-  };
-
-  const handleSave = async () => {
-    if (!editingItem) return;
-    
-    setLoading(true);
-    try {
-      console.log('Saving item:', editingItem);
-      
-      if (editingItem.type === 'announcement') {
-        const itemData = {
-          title: editingItem.title,
-          description: editingItem.description,
-          date: editingItem.date,
-          ...(editingItem.image && { image: editingItem.image })
-        };
-        
-        if (editingItem.id) {
-          const { error } = await supabase
-            .from('announcements')
-            .update(itemData)
-            .eq('id', editingItem.id);
-          if (error) {
-            console.error('Update error:', error);
-            throw error;
-          }
-        } else {
-          const { error } = await supabase
-            .from('announcements')
-            .insert(itemData);
-          if (error) {
-            console.error('Insert error:', error);
-            throw error;
-          }
-        }
-        await fetchAnnouncements();
-      } else if (editingItem.type === 'event') {
-        const itemData = {
-          name: editingItem.name,
-          description: editingItem.description,
-          date: editingItem.date,
-          time: editingItem.time,
-          ...(editingItem.image && { image: editingItem.image })
-        };
-        
-        if (editingItem.id) {
-          const { error } = await supabase
-            .from('events')
-            .update(itemData)
-            .eq('id', editingItem.id);
-          if (error) {
-            console.error('Update error:', error);
-            throw error;
-          }
-        } else {
-          const { error } = await supabase
-            .from('events')
-            .insert(itemData);
-          if (error) {
-            console.error('Insert error:', error);
-            throw error;
-          }
-        }
-        await fetchEvents();
-      } else if (editingItem.type === 'gemstone') {
-        const itemData = {
-          name: editingItem.name,
-          image: editingItem.image,
-          price: editingItem.price,
-          category: editingItem.category,
-          ...(editingItem.description && { description: editingItem.description })
-        };
-        
-        if (editingItem.id) {
-          const { error } = await supabase
-            .from('gemstones')
-            .update(itemData)
-            .eq('id', editingItem.id);
-          if (error) {
-            console.error('Update error:', error);
-            throw error;
-          }
-        } else {
-          const { error } = await supabase
-            .from('gemstones')
-            .insert(itemData);
-          if (error) {
-            console.error('Insert error:', error);
-            throw error;
-          }
-        }
-        await fetchGemstones();
-      }
-      
-      toast({ title: "Success", description: "Item saved successfully" });
-      setIsEditing(false);
-      setEditingItem(null);
-    } catch (error) {
-      console.error('Save error:', error);
-      toast({ title: "Error", description: `Failed to save item: ${error.message}`, variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string, type: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this item?')) return;
-    
-    setLoading(true);
+
     try {
-      if (type === 'announcement') {
-        const { error } = await supabase.from('announcements').delete().eq('id', id);
-        if (error) throw error;
-        await fetchAnnouncements();
-      } else if (type === 'event') {
-        const { error } = await supabase.from('events').delete().eq('id', id);
-        if (error) throw error;
-        await fetchEvents();
-      } else if (type === 'gemstone') {
-        const { error } = await supabase.from('gemstones').delete().eq('id', id);
-        if (error) throw error;
-        await fetchGemstones();
+      let result;
+      if (activeTab === 'announcements') {
+        result = await supabase.from('announcements').delete().eq('id', id);
+      } else if (activeTab === 'events') {
+        result = await supabase.from('events').delete().eq('id', id);
+      } else if (activeTab === 'gemstones') {
+        result = await supabase.from('gemstones').delete().eq('id', id);
       }
-      
-      toast({ title: "Success", description: "Item deleted successfully" });
+
+      if (result?.error) {
+        throw result.error;
+      }
+
+      fetchData();
     } catch (error) {
-      console.error('Delete error:', error);
-      toast({ title: "Error", description: "Failed to delete item", variant: "destructive" });
-    } finally {
-      setLoading(false);
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item. Please try again.');
     }
   };
 
-  const handleAdd = (type: string) => {
-    if (type === 'announcement') {
-      setEditingItem({ type, title: '', date: '', description: '', image: '' });
-    } else if (type === 'event') {
-      setEditingItem({ type, name: '', date: '', time: '', description: '', image: '' });
-    } else if (type === 'gemstone') {
-      setEditingItem({ type, name: '', image: '', price: '', category: '', description: '' });
-    }
-    setIsEditing(true);
-  };
+  const renderForm = () => (
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+        {editingId ? 'Edit' : 'Add'} {activeTab.slice(0, -1)}
+      </h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {(activeTab === 'announcements' || activeTab === 'events' || activeTab === 'gemstones') && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              {activeTab === 'announcements' ? 'Title' : 'Name'}
+            </label>
+            <input
+              type="text"
+              value={activeTab === 'announcements' ? formData.title || '' : formData.name || ''}
+              onChange={(e) => setFormData({
+                ...formData,
+                [activeTab === 'announcements' ? 'title' : 'name']: e.target.value
+              })}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              required
+            />
+          </div>
+        )}
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-all duration-500">
-      <header className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-xl border-b border-slate-200/50 dark:border-slate-700/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center space-x-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-2xl">A</span>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-                  Admin Dashboard
-                </h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Euro Vision 2000 Management</p>
-              </div>
+        {activeTab !== 'gemstones' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Date
+            </label>
+            <input
+              type="date"
+              value={formData.date}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              required
+            />
+          </div>
+        )}
+
+        {activeTab === 'events' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Time
+            </label>
+            <input
+              type="time"
+              value={formData.time || ''}
+              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              required
+            />
+          </div>
+        )}
+
+        {activeTab === 'gemstones' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Category
+              </label>
+              <input
+                type="text"
+                value={formData.category || ''}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                required
+              />
             </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={toggleTheme}
-                className="relative p-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300 shadow-md"
-                aria-label="Toggle theme"
-              >
-                <div className="relative w-6 h-6">
-                  <Sun 
-                    className={`absolute inset-0 w-6 h-6 text-gray-600 dark:text-gray-400 transition-all duration-300 ${
-                      theme === 'light' ? 'rotate-0 scale-100' : 'rotate-90 scale-0'
-                    }`} 
-                  />
-                  <Moon 
-                    className={`absolute inset-0 w-6 h-6 text-gray-600 dark:text-gray-400 transition-all duration-300 ${
-                      theme === 'dark' ? 'rotate-0 scale-100' : '-rotate-90 scale-0'
-                    }`} 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Price
+              </label>
+              <input
+                type="text"
+                value={formData.price || ''}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <Image className="w-4 h-4 inline mr-1" />
+                Image URL
+              </label>
+              <input
+                type="url"
+                value={formData.image || ''}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                placeholder="https://example.com/image.jpg"
+                required
+              />
+              {formData.image && (
+                <div className="mt-2">
+                  <img 
+                    src={formData.image} 
+                    alt="Preview" 
+                    className="w-32 h-32 object-cover rounded-md border border-gray-300 dark:border-gray-600"
+                    onError={(e) => {
+                      e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"%3E%3Crect width="128" height="128" fill="%23f0f0f0"/%3E%3Ctext x="64" y="64" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="12" fill="%23999"%3EInvalid Image%3C/text%3E%3C/svg%3E';
+                    }}
                   />
                 </div>
-              </button>
-              <button
-                onClick={onLogout}
-                className="flex items-center space-x-3 px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-medium"
-              >
-                <LogOut className="w-5 h-5" />
-                <span>Logout</span>
-              </button>
+              )}
             </div>
+          </>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Description
+          </label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            rows={4}
+            required
+          />
+        </div>
+
+        <div className="flex space-x-2">
+          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            {editingId ? 'Update' : 'Create'}
+          </Button>
+          <Button type="button" variant="outline" onClick={resetForm}>
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+
+  const renderList = () => {
+    let items: (Announcement | Event | Gemstone)[] = [];
+    
+    if (activeTab === 'announcements') {
+      items = announcements;
+    } else if (activeTab === 'events') {
+      items = events;
+    } else if (activeTab === 'gemstones') {
+      items = gemstones;
+    }
+
+    if (items.length === 0) {
+      return (
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          No {activeTab} found. Create your first one!
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid gap-4">
+        {items.map((item) => (
+          <div key={item.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-800 dark:text-gray-100">
+                  {activeTab === 'announcements' ? (item as Announcement).title :
+                   activeTab === 'events' ? (item as Event).name :
+                   (item as Gemstone).name}
+                </h4>
+                {activeTab !== 'gemstones' && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {activeTab === 'announcements' ? 
+                      new Date((item as Announcement).date).toLocaleDateString() :
+                      `${new Date((item as Event).date).toLocaleDateString()} at ${(item as Event).time}`
+                    }
+                  </p>
+                )}
+                {activeTab === 'gemstones' && (
+                  <div className="flex items-center space-x-4 mt-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {(item as Gemstone).category}
+                    </span>
+                    <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                      {(item as Gemstone).price}
+                    </span>
+                    {(item as Gemstone).image && (
+                      <img 
+                        src={(item as Gemstone).image} 
+                        alt={(item as Gemstone).name}
+                        className="w-12 h-12 object-cover rounded"
+                        onError={(e) => {
+                          e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"%3E%3Crect width="48" height="48" fill="%23f0f0f0"/%3E%3Ctext x="24" y="24" text-anchor="middle" dy=".3em" font-family="Arial, sans-serif" font-size="8" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
+                <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                  {item.description}
+                </p>
+              </div>
+              <div className="flex space-x-2 ml-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleEdit(item)}
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 dark:border-white"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Admin Dashboard
+            </h1>
+            <Button onClick={onLogout} variant="outline">
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl shadow-2xl mb-8 border border-slate-200/50 dark:border-slate-700/50">
-          <div className="border-b border-slate-200/50 dark:border-slate-700/50">
-            <nav className="flex space-x-8 px-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <nav className="-mb-px flex space-x-8">
               {[
-                { id: 'announcements', name: 'Announcements', icon: Bell, color: 'from-blue-500 to-blue-600' },
-                { id: 'events', name: 'Events', icon: Calendar, color: 'from-green-500 to-green-600' },
-                { id: 'gemstones', name: 'Gemstones', icon: Gem, color: 'from-purple-500 to-purple-600' }
-              ].map((tab) => (
+                { key: 'announcements', label: 'Announcements', icon: Bell },
+                { key: 'events', label: 'Events', icon: Calendar },
+                { key: 'gemstones', label: 'Gemstones', icon: Gem },
+              ].map(({ key, label, icon: Icon }) => (
                 <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-3 py-6 px-2 border-b-3 font-semibold text-base transition-all duration-300 ${
-                    activeTab === tab.id
-                      ? 'border-slate-700 dark:border-slate-300 text-slate-700 dark:text-slate-300'
-                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:hover:text-slate-300 dark:hover:border-slate-600'
+                  key={key}
+                  onClick={() => setActiveTab(key as any)}
+                  className={`group inline-flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === key
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
                   }`}
                 >
-                  <tab.icon className="w-6 h-6" />
-                  <span>{tab.name}</span>
+                  <Icon className="w-5 h-5 mr-2" />
+                  {label}
                 </button>
               ))}
             </nav>
           </div>
         </div>
 
-        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
-          <div className="p-8">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 capitalize">{activeTab}</h2>
-              <button
-                onClick={() => handleAdd(activeTab.slice(0, -1))}
-                disabled={loading}
-                className="flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold disabled:opacity-50"
-              >
-                <Plus className="w-5 h-5" />
-                <span>Add New</span>
-              </button>
-            </div>
-
-            {activeTab === 'announcements' && (
-              <div className="grid gap-6">
-                {announcements.map((announcement) => (
-                  <div key={announcement.id} className="bg-gradient-to-r from-white to-blue-50 dark:from-slate-700 dark:to-slate-600 border border-slate-200 dark:border-slate-600 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex space-x-6 flex-1">
-                        {announcement.image && (
-                          <img 
-                            src={announcement.image} 
-                            alt={announcement.title}
-                            className="w-24 h-24 object-cover rounded-2xl shadow-lg"
-                          />
-                        )}
-                        <div className="flex-1">
-                          <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 text-xl">{announcement.title}</h3>
-                          <p className="text-sm text-blue-600 dark:text-blue-400 mb-4 font-medium">{announcement.date}</p>
-                          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{announcement.description}</p>
-                        </div>
-                      </div>
-                      <div className="flex space-x-3 ml-6">
-                        <button
-                          onClick={() => handleEdit(announcement, 'announcement')}
-                          disabled={loading}
-                          className="p-3 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-all duration-300 transform hover:scale-110 disabled:opacity-50"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(announcement.id, 'announcement')}
-                          disabled={loading}
-                          className="p-3 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl transition-all duration-300 transform hover:scale-110 disabled:opacity-50"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeTab === 'events' && (
-              <div className="grid gap-6">
-                {events.map((event) => (
-                  <div key={event.id} className="bg-gradient-to-r from-white to-green-50 dark:from-slate-700 dark:to-slate-600 border border-slate-200 dark:border-slate-600 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex space-x-6 flex-1">
-                        {event.image && (
-                          <img 
-                            src={event.image} 
-                            alt={event.name}
-                            className="w-24 h-24 object-cover rounded-2xl shadow-lg"
-                          />
-                        )}
-                        <div className="flex-1">
-                          <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 text-xl">{event.name}</h3>
-                          <p className="text-sm text-green-600 dark:text-green-400 mb-4 font-medium">{event.date} at {event.time}</p>
-                          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{event.description}</p>
-                        </div>
-                      </div>
-                      <div className="flex space-x-3 ml-6">
-                        <button
-                          onClick={() => handleEdit(event, 'event')}
-                          disabled={loading}
-                          className="p-3 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-all duration-300 transform hover:scale-110 disabled:opacity-50"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(event.id, 'event')}
-                          disabled={loading}
-                          className="p-3 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl transition-all duration-300 transform hover:scale-110 disabled:opacity-50"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeTab === 'gemstones' && (
-              <div className="grid gap-6">
-                {gemstones.map((gemstone) => (
-                  <div key={gemstone.id} className="bg-gradient-to-r from-white to-purple-50 dark:from-slate-700 dark:to-slate-600 border border-slate-200 dark:border-slate-600 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex space-x-6 flex-1">
-                        <img 
-                          src={gemstone.image} 
-                          alt={gemstone.name}
-                          className="w-24 h-24 object-cover rounded-2xl shadow-lg"
-                        />
-                        <div className="flex-1">
-                          <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-3 text-xl">{gemstone.name}</h3>
-                          <p className="text-sm text-purple-600 dark:text-purple-400 mb-2 font-medium">Price: {gemstone.price}</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">Category: {gemstone.category}</p>
-                          <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{gemstone.description}</p>
-                        </div>
-                      </div>
-                      <div className="flex space-x-3 ml-6">
-                        <button
-                          onClick={() => handleEdit(gemstone, 'gemstone')}
-                          disabled={loading}
-                          className="p-3 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-all duration-300 transform hover:scale-110 disabled:opacity-50"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(gemstone.id, 'gemstone')}
-                          disabled={loading}
-                          className="p-3 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl transition-all duration-300 transform hover:scale-110 disabled:opacity-50"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 capitalize">
+              {activeTab}
+            </h2>
+            <Button onClick={() => setShowForm(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add {activeTab.slice(0, -1)}
+            </Button>
           </div>
+
+          {showForm && renderForm()}
+          {renderList()}
         </div>
-      </div>
-
-      {isEditing && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-lg w-full transform animate-scale-in border border-slate-200/50 dark:border-slate-700/50">
-            <div className="flex justify-between items-center p-8 border-b border-slate-200 dark:border-slate-700">
-              <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                {editingItem?.id ? 'Edit' : 'Add'} {editingItem?.type}
-              </h3>
-              <button
-                onClick={() => setIsEditing(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors duration-300 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="p-8 space-y-6 max-h-96 overflow-y-auto">
-              {editingItem?.type === 'announcement' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Title"
-                    value={editingItem.title || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                  <input
-                    type="date"
-                    value={editingItem.date || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, date: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Upload Image (Optional)
-                    </label>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'image')}
-                        className="hidden"
-                        id="announcement-image"
-                        disabled={uploading}
-                      />
-                      <label
-                        htmlFor="announcement-image"
-                        className="flex items-center space-x-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors duration-300"
-                      >
-                        <Upload className="w-4 h-4" />
-                        <span>{uploading ? 'Uploading...' : 'Choose Image'}</span>
-                      </label>
-                      {editingItem.image && (
-                        <img src={editingItem.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
-                      )}
-                    </div>
-                  </div>
-                  <textarea
-                    placeholder="Description"
-                    value={editingItem.description || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-                    rows={4}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                </>
-              )}
-
-              {editingItem?.type === 'event' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Event Name"
-                    value={editingItem.name || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                  <input
-                    type="date"
-                    value={editingItem.date || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, date: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                  <input
-                    type="time"
-                    value={editingItem.time || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, time: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Upload Image (Optional)
-                    </label>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'image')}
-                        className="hidden"
-                        id="event-image"
-                        disabled={uploading}
-                      />
-                      <label
-                        htmlFor="event-image"
-                        className="flex items-center space-x-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors duration-300"
-                      >
-                        <Upload className="w-4 h-4" />
-                        <span>{uploading ? 'Uploading...' : 'Choose Image'}</span>
-                      </label>
-                      {editingItem.image && (
-                        <img src={editingItem.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
-                      )}
-                    </div>
-                  </div>
-                  <textarea
-                    placeholder="Description"
-                    value={editingItem.description || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-                    rows={4}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                </>
-              )}
-
-              {editingItem?.type === 'gemstone' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Gemstone Name"
-                    value={editingItem.name || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Upload Image
-                    </label>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'image')}
-                        className="hidden"
-                        id="gemstone-image"
-                        disabled={uploading}
-                      />
-                      <label
-                        htmlFor="gemstone-image"
-                        className="flex items-center space-x-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors duration-300"
-                      >
-                        <Upload className="w-4 h-4" />
-                        <span>{uploading ? 'Uploading...' : 'Choose Image'}</span>
-                      </label>
-                      {editingItem.image && (
-                        <img src={editingItem.image} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
-                      )}
-                    </div>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Price (e.g., $5,000)"
-                    value={editingItem.price || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, price: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                  <select
-                    value={editingItem.category || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  >
-                    <option value="">Select Category</option>
-                    <option value="Precious">Precious</option>
-                    <option value="Semi-Precious">Semi-Precious</option>
-                    <option value="Rare">Rare</option>
-                    <option value="Collectible">Collectible</option>
-                  </select>
-                  <textarea
-                    placeholder="Description"
-                    value={editingItem.description || ''}
-                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-                    rows={4}
-                    className="w-full px-4 py-4 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-700 dark:text-slate-100 transition-all duration-300 text-lg"
-                  />
-                </>
-              )}
-            </div>
-
-            <div className="flex justify-end space-x-4 p-8 border-t border-slate-200 dark:border-slate-700">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-8 py-4 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300 font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={loading || uploading}
-                className="flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-medium disabled:opacity-50"
-              >
-                <Save className="w-5 h-5" />
-                <span>{loading ? 'Saving...' : 'Save'}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </main>
     </div>
   );
 };

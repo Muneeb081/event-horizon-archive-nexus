@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -44,52 +43,52 @@ const Hero = () => {
 
   const hotelShowImages = [
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/pp1.jpg",
-      title: "HOTEL SHOW & EXHIBITOR",
-      subtitle: "International Hotel & Hospitality Exhibition",
+      url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f8f9fa'/%3E%3Ctext x='200' y='100' text-anchor='middle' font-family='Arial, sans-serif' font-size='32' font-weight='bold' fill='%23212529'%3EHotel Show%3C/text%3E%3Ctext x='200' y='140' text-anchor='middle' font-family='Arial, sans-serif' font-size='16' fill='%236c757d'%3EInternational Exhibition%3C/text%3E%3Cpath d='M150 170 L250 170 L250 220 L150 220 Z' fill='none' stroke='%23007bff' stroke-width='2'/%3E%3Cpath d='M150 195 L170 195 L170 220 L150 220 Z' fill='%23007bff'/%3E%3Cpath d='M180 195 L200 195 L200 220 L180 220 Z' fill='%23007bff'/%3E%3Cpath d='M210 195 L230 195 L230 220 L210 220 Z' fill='%23007bff'/%3E%3Cpath d='M240 195 L250 195 L250 220 L240 220 Z' fill='%23007bff'/%3E%3C/svg%3E",
+      title: "HOTEL SHOW",
+      subtitle: "International Exhibition",
       description: "Premier showcase of hospitality industry innovations"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/us2.jpg",
-      title: "LUXURY ACCOMMODATIONS",
-      subtitle: "Premium Hotel Services",
-      description: "Experience world-class hospitality standards"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0015.jpg",
+      title: "EXHIBITOR HOTEL SHOW",
+      subtitle: "Industry Exhibition",
+      description: "Professional exhibitors showcasing hospitality solutions"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/5x7.jpg",
-      title: "CONFERENCE FACILITIES",
-      subtitle: "Modern Meeting Spaces",
-      description: "State-of-the-art conference and event venues"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0019.jpg",
+      title: "EXHIBITOR HOTEL SHOW",
+      subtitle: "Trade Fair Display",
+      description: "Comprehensive exhibition of hotel industry products"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/governor.jpg",
-      title: "CULINARY EXCELLENCE",
-      subtitle: "Fine Dining Experience",
-      description: "International cuisine and gourmet specialties"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0058-1.jpg",
+      title: "EXHIBITOR HOTEL SHOW",
+      subtitle: "Professional Showcase",
+      description: "Latest trends and innovations in hospitality"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/DSC04721.jpg",
-      title: "BUSINESS SERVICES",
-      subtitle: "Executive Solutions",
-      description: "Complete business support and concierge services"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180411-WA0023.jpg",
+      title: "EXHIBITOR HOTEL SHOW",
+      subtitle: "Business Networking",
+      description: "Connecting industry professionals and suppliers"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/DSC04571.jpg",
-      title: "WELLNESS & SPA",
-      subtitle: "Relaxation & Recreation",
-      description: "Premium wellness facilities and spa services"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0026.jpg",
+      title: "EXHIBITOR HOTEL SHOW",
+      subtitle: "Market Solutions",
+      description: "Innovative solutions for the hospitality sector"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/07/18-1-1.jpg",
-      title: "EXHIBITION SPACES",
-      subtitle: "Trade Fair Venues",
-      description: "Comprehensive exhibition and display facilities"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/07/22528237_10154895551787478_347286391236017277_n.jpg",
+      title: "HIGH POINT MARKET WEEK",
+      subtitle: "Fall North Carolina 16 - 20 October 2021 USA",
+      description: "Premier furniture and home furnishings market"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/07/9.jpg",
-      title: "NETWORKING EVENTS",
-      subtitle: "Industry Connections",
-      description: "Professional networking and partnership opportunities"
+      url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f8f9fa'/%3E%3Ctext x='200' y='90' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='%23212529'%3EJA NEW YORK%3C/text%3E%3Ctext x='200' y='120' text-anchor='middle' font-family='Arial, sans-serif' font-size='16' fill='%236c757d'%3EFashion Trade Show%3C/text%3E%3Ctext x='200' y='160' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%23495057'%3E24 - 26 October 2021%3C/text%3E%3Cpath d='M120 180 L280 180 L280 220 L120 220 Z' fill='none' stroke='%2328a745' stroke-width='2'/%3E%3Cpath d='M150 190 L170 210 L270 190' fill='none' stroke='%2328a745' stroke-width='2'/%3E%3C/svg%3E",
+      title: "JA NEW YORK SHOW",
+      subtitle: "24 - 26 October 2021",
+      description: "International fashion and jewelry trade exhibition"
     }
   ];
 
