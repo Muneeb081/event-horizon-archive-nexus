@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Bell, Calendar, Gem, Plus, Edit, Trash2, LogOut, Save, X, Moon, Sun, Upload } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
@@ -50,6 +51,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const fetchAnnouncements = async () => {
     const { data, error } = await supabase.from('announcements').select('*').order('date', { ascending: false });
     if (error) {
+      console.error('Error fetching announcements:', error);
       toast({ title: "Error", description: "Failed to fetch announcements", variant: "destructive" });
     } else {
       setAnnouncements(data || []);
@@ -59,6 +61,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const fetchEvents = async () => {
     const { data, error } = await supabase.from('events').select('*').order('date', { ascending: false });
     if (error) {
+      console.error('Error fetching events:', error);
       toast({ title: "Error", description: "Failed to fetch events", variant: "destructive" });
     } else {
       setEvents(data || []);
@@ -68,6 +71,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const fetchGemstones = async () => {
     const { data, error } = await supabase.from('gemstones').select('*').order('created_at', { ascending: false });
     if (error) {
+      console.error('Error fetching gemstones:', error);
       toast({ title: "Error", description: "Failed to fetch gemstones", variant: "destructive" });
     } else {
       setGemstones(data || []);
@@ -80,7 +84,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
     fetchGemstones();
   }, []);
 
-  const handleImageUpload = async (file: File, type: string) => {
+  const handleImageUpload = async (file: File) => {
     if (!file) return null;
 
     setUploading(true);
@@ -99,6 +103,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       });
     } catch (error) {
       setUploading(false);
+      console.error('Image upload error:', error);
       toast({ title: "Error", description: "Failed to upload image", variant: "destructive" });
       return null;
     }
@@ -107,7 +112,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = await handleImageUpload(file, editingItem?.type);
+      const imageUrl = await handleImageUpload(file);
       if (imageUrl) {
         setEditingItem({ ...editingItem, [field]: imageUrl });
       }
@@ -124,80 +129,89 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
     
     setLoading(true);
     try {
+      console.log('Saving item:', editingItem);
+      
       if (editingItem.type === 'announcement') {
+        const itemData = {
+          title: editingItem.title,
+          description: editingItem.description,
+          date: editingItem.date,
+          ...(editingItem.image && { image: editingItem.image })
+        };
+        
         if (editingItem.id) {
           const { error } = await supabase
             .from('announcements')
-            .update({
-              title: editingItem.title,
-              description: editingItem.description,
-              date: editingItem.date,
-              image: editingItem.image
-            })
+            .update(itemData)
             .eq('id', editingItem.id);
-          if (error) throw error;
+          if (error) {
+            console.error('Update error:', error);
+            throw error;
+          }
         } else {
           const { error } = await supabase
             .from('announcements')
-            .insert({
-              title: editingItem.title,
-              description: editingItem.description,
-              date: editingItem.date,
-              image: editingItem.image
-            });
-          if (error) throw error;
+            .insert(itemData);
+          if (error) {
+            console.error('Insert error:', error);
+            throw error;
+          }
         }
         await fetchAnnouncements();
       } else if (editingItem.type === 'event') {
+        const itemData = {
+          name: editingItem.name,
+          description: editingItem.description,
+          date: editingItem.date,
+          time: editingItem.time,
+          ...(editingItem.image && { image: editingItem.image })
+        };
+        
         if (editingItem.id) {
           const { error } = await supabase
             .from('events')
-            .update({
-              name: editingItem.name,
-              description: editingItem.description,
-              date: editingItem.date,
-              time: editingItem.time,
-              image: editingItem.image
-            })
+            .update(itemData)
             .eq('id', editingItem.id);
-          if (error) throw error;
+          if (error) {
+            console.error('Update error:', error);
+            throw error;
+          }
         } else {
           const { error } = await supabase
             .from('events')
-            .insert({
-              name: editingItem.name,
-              description: editingItem.description,
-              date: editingItem.date,
-              time: editingItem.time,
-              image: editingItem.image
-            });
-          if (error) throw error;
+            .insert(itemData);
+          if (error) {
+            console.error('Insert error:', error);
+            throw error;
+          }
         }
         await fetchEvents();
       } else if (editingItem.type === 'gemstone') {
+        const itemData = {
+          name: editingItem.name,
+          image: editingItem.image,
+          price: editingItem.price,
+          category: editingItem.category,
+          ...(editingItem.description && { description: editingItem.description })
+        };
+        
         if (editingItem.id) {
           const { error } = await supabase
             .from('gemstones')
-            .update({
-              name: editingItem.name,
-              image: editingItem.image,
-              price: editingItem.price,
-              category: editingItem.category,
-              description: editingItem.description
-            })
+            .update(itemData)
             .eq('id', editingItem.id);
-          if (error) throw error;
+          if (error) {
+            console.error('Update error:', error);
+            throw error;
+          }
         } else {
           const { error } = await supabase
             .from('gemstones')
-            .insert({
-              name: editingItem.name,
-              image: editingItem.image,
-              price: editingItem.price,
-              category: editingItem.category,
-              description: editingItem.description
-            });
-          if (error) throw error;
+            .insert(itemData);
+          if (error) {
+            console.error('Insert error:', error);
+            throw error;
+          }
         }
         await fetchGemstones();
       }
@@ -206,7 +220,8 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       setIsEditing(false);
       setEditingItem(null);
     } catch (error) {
-      toast({ title: "Error", description: "Failed to save item", variant: "destructive" });
+      console.error('Save error:', error);
+      toast({ title: "Error", description: `Failed to save item: ${error.message}`, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -233,6 +248,7 @@ const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
       
       toast({ title: "Success", description: "Item deleted successfully" });
     } catch (error) {
+      console.error('Delete error:', error);
       toast({ title: "Error", description: "Failed to delete item", variant: "destructive" });
     } finally {
       setLoading(false);

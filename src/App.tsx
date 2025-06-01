@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import AnnouncementDetail from "./pages/AnnouncementDetail";
+import EventDetail from "./pages/EventDetail";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/announcement/:id" element={<AnnouncementDetail />} />
+            <Route path="/event/:id" element={<EventDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

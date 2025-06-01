@@ -1,12 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Hero = () => {
   const [currentPakistanSlide, setCurrentPakistanSlide] = useState(0);
   const [currentHotelSlide, setCurrentHotelSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [isHotelTransitioning, setIsHotelTransitioning] = useState(false);
-  const [isPakistanTransitioning, setIsPakistanTransitioning] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -43,113 +42,87 @@ const Hero = () => {
     }
   ];
 
-  // Custom Hotel Show component for themed images
-  const HotelShowImage = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-    <div className={`relative w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-purple-800 ${className}`}>
-      <div className="text-center text-white p-8">
-        {children}
-      </div>
-    </div>
-  );
-
-  const HighPointMarketImage = ({ className = "" }: { className?: string }) => (
-    <div className={`relative w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-700 to-blue-900 ${className}`}>
-      <div className="text-center text-white p-8">
-        <div className="bg-orange-600 text-white px-4 py-2 rounded mb-4 inline-block font-bold">
-          HPMKT
-        </div>
-        <h3 className="text-4xl font-bold mb-4">High Point Market</h3>
-        <p className="text-xl mb-2">Week Fall North Carolina</p>
-        <p className="text-lg">16 - 20 October 2021 USA</p>
-      </div>
-    </div>
-  );
-
-  const JANewYorkImage = ({ className = "" }: { className?: string }) => (
-    <div className={`relative w-full h-full flex items-center justify-center bg-gradient-to-br from-green-500 to-green-700 ${className}`}>
-      <div className="text-center text-white p-8">
-        <div className="bg-gray-800 text-white px-6 py-3 rounded mb-4 inline-block">
-          <span className="text-2xl font-bold">JA</span>
-          <span className="text-lg ml-2">NewYork</span>
-        </div>
-        <h3 className="text-2xl font-bold mb-2">JA New York Show</h3>
-        <p className="text-lg">24 - 26 October 2021</p>
-      </div>
-    </div>
-  );
-
   const hotelShowImages = [
     {
-      component: () => (
-        <HotelShowImage>
-          <h2 className="text-4xl font-bold mb-4">Hotel Show</h2>
-          <p className="text-lg">Saudi Arabia</p>
-        </HotelShowImage>
-      ),
-      heading: "Hotel Show"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/pp1.jpg",
+      title: "HOTEL SHOW & EXHIBITOR",
+      subtitle: "International Hotel & Hospitality Exhibition",
+      description: "Premier showcase of hospitality industry innovations"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0015.jpg",
-      heading: "Exhibitor Hotel Show"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/us2.jpg",
+      title: "LUXURY ACCOMMODATIONS",
+      subtitle: "Premium Hotel Services",
+      description: "Experience world-class hospitality standards"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0019.jpg",
-      heading: "Exhibitor Hotel Show"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/5x7.jpg",
+      title: "CONFERENCE FACILITIES",
+      subtitle: "Modern Meeting Spaces",
+      description: "State-of-the-art conference and event venues"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0058-1.jpg",
-      heading: "Exhibitor Hotel Show"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/governor.jpg",
+      title: "CULINARY EXCELLENCE",
+      subtitle: "Fine Dining Experience",
+      description: "International cuisine and gourmet specialties"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180411-WA0023.jpg",
-      heading: "Exhibitor Hotel Show"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/DSC04721.jpg",
+      title: "BUSINESS SERVICES",
+      subtitle: "Executive Solutions",
+      description: "Complete business support and concierge services"
     },
     {
-      url: "http://www.eurovision2000.org/wp-content/uploads/2018/10/IMG-20180412-WA0026.jpg",
-      heading: "Exhibitor Hotel Show"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2015/08/DSC04571.jpg",
+      title: "WELLNESS & SPA",
+      subtitle: "Relaxation & Recreation",
+      description: "Premium wellness facilities and spa services"
     },
     {
-      component: () => <HighPointMarketImage />,
-      heading: "High Point Market Week Fall North Carolina 16 - 20 October 2021 USA"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/07/18-1-1.jpg",
+      title: "EXHIBITION SPACES",
+      subtitle: "Trade Fair Venues",
+      description: "Comprehensive exhibition and display facilities"
     },
     {
-      component: () => <JANewYorkImage />,
-      heading: "JA New York Show 24 - 26 October 2021"
+      url: "http://www.eurovision2000.org/wp-content/uploads/2018/07/9.jpg",
+      title: "NETWORKING EVENTS",
+      subtitle: "Industry Connections",
+      description: "Professional networking and partnership opportunities"
     }
   ];
 
-  const handlePakistanSlideChange = (newSlide: number) => {
-    setIsPakistanTransitioning(true);
-    setTimeout(() => {
-      setCurrentPakistanSlide(newSlide);
-      setIsPakistanTransitioning(false);
-    }, 150);
+  const nextPakistanSlide = () => {
+    setCurrentPakistanSlide((prev) => (prev + 1) % pakistanPavilionImages.length);
   };
 
-  const handleHotelSlideChange = (newSlide: number) => {
-    setIsHotelTransitioning(true);
-    setTimeout(() => {
-      setCurrentHotelSlide(newSlide);
-      setIsHotelTransitioning(false);
-    }, 150);
+  const prevPakistanSlide = () => {
+    setCurrentPakistanSlide((prev) => (prev - 1 + pakistanPavilionImages.length) % pakistanPavilionImages.length);
+  };
+
+  const nextHotelSlide = () => {
+    setCurrentHotelSlide((prev) => (prev + 1) % hotelShowImages.length);
+  };
+
+  const prevHotelSlide = () => {
+    setCurrentHotelSlide((prev) => (prev - 1 + hotelShowImages.length) % hotelShowImages.length);
   };
 
   useEffect(() => {
     const pakistanInterval = setInterval(() => {
-      const nextSlide = (currentPakistanSlide + 1) % pakistanPavilionImages.length;
-      handlePakistanSlideChange(nextSlide);
+      nextPakistanSlide();
     }, 4000);
 
     const hotelInterval = setInterval(() => {
-      const nextSlide = (currentHotelSlide + 1) % hotelShowImages.length;
-      handleHotelSlideChange(nextSlide);
+      nextHotelSlide();
     }, 5000);
 
     return () => {
       clearInterval(pakistanInterval);
       clearInterval(hotelInterval);
     };
-  }, [currentPakistanSlide, currentHotelSlide]);
+  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-all duration-700">
@@ -192,12 +165,26 @@ const Hero = () => {
                 <img 
                   src={pakistanPavilionImages[currentPakistanSlide].url}
                   alt="Pakistan Pavilion"
-                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out transform ${
-                    isPakistanTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
-                  } group-hover:scale-105`}
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out transform group-hover:scale-105"
                 />
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+              
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevPakistanSlide}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300 hover:scale-110 active:scale-95"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+              
+              <button
+                onClick={nextPakistanSlide}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300 hover:scale-110 active:scale-95"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+
               <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                 <p className="text-white text-sm md:text-lg font-medium leading-relaxed shadow-lg">
                   {pakistanPavilionImages[currentPakistanSlide].description}
@@ -208,7 +195,7 @@ const Hero = () => {
               {pakistanPavilionImages.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => handlePakistanSlideChange(index)}
+                  onClick={() => setCurrentPakistanSlide(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 transform shadow-md ${
                     index === currentPakistanSlide 
                       ? 'bg-gradient-to-r from-green-600 to-blue-600 scale-110 shadow-lg' 
@@ -228,38 +215,46 @@ const Hero = () => {
             </h2>
             <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden group shadow-xl">
               <div className="relative w-full h-full">
-                {hotelShowImages[currentHotelSlide].component ? (
-                  <div className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out transform ${
-                    isHotelTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
-                  } group-hover:scale-105`}>
-                    {hotelShowImages[currentHotelSlide].component()}
-                  </div>
-                ) : (
-                  <img 
-                    src={hotelShowImages[currentHotelSlide].url}
-                    alt="Hotel Show"
-                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out transform ${
-                      isHotelTransitioning ? 'opacity-0 scale-110' : 'opacity-100 scale-100'
-                    } group-hover:scale-105`}
-                  />
-                )}
+                <img 
+                  src={hotelShowImages[currentHotelSlide].url}
+                  alt="Hotel Show"
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out transform group-hover:scale-105"
+                />
               </div>
-              {!hotelShowImages[currentHotelSlide].component && (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                    <h3 className="text-white text-lg md:text-xl font-bold shadow-lg">
-                      {hotelShowImages[currentHotelSlide].heading}
-                    </h3>
-                  </div>
-                </>
-              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+              
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevHotelSlide}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300 hover:scale-110 active:scale-95"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+              
+              <button
+                onClick={nextHotelSlide}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300 hover:scale-110 active:scale-95"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                <h3 className="text-white text-lg md:text-xl font-bold shadow-lg mb-2">
+                  {hotelShowImages[currentHotelSlide].title}
+                </h3>
+                <p className="text-white text-base md:text-lg mb-1 shadow-md opacity-90">
+                  {hotelShowImages[currentHotelSlide].subtitle}
+                </p>
+                <p className="text-white text-sm md:text-base font-medium leading-relaxed shadow-md opacity-80">
+                  {hotelShowImages[currentHotelSlide].description}
+                </p>
+              </div>
             </div>
             <div className="flex justify-center mt-4 space-x-2">
               {hotelShowImages.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => handleHotelSlideChange(index)}
+                  onClick={() => setCurrentHotelSlide(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 transform shadow-md ${
                     index === currentHotelSlide 
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 scale-110 shadow-lg' 
