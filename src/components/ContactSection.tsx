@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -17,7 +18,8 @@ const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+      // Replace with your actual Formspree form ID
+      const response = await fetch('https://formspree.io/f/xanybwpv', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +192,7 @@ const ContactSection = () => {
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  To connect this form with Formspree, replace 'YOUR_FORM_ID' in the form action with your actual Formspree form ID.
+                  This form is powered by Formspree for secure message delivery.
                 </p>
               </div>
             </div>

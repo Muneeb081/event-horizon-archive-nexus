@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { X, User, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface EventRegistrationFormProps {
   isOpen: boolean;
@@ -16,6 +18,7 @@ const EventRegistrationForm: React.FC<EventRegistrationFormProps> = ({
   eventName,
   eventId
 }) => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,16 +40,44 @@ const EventRegistrationForm: React.FC<EventRegistrationFormProps> = ({
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission (you can integrate with a real API here)
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const { error } = await supabase
+        .from('event_registrations')
+        .insert({
+          event_id: eventId,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          address: formData.address || null,
+          message: formData.message || null
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Success!",
+        description: "Your registration has been submitted successfully.",
+      });
+
       setIsSubmitted(true);
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({ name: '', email: '', phone: '', address: '', message: '' });
         onClose();
       }, 2000);
-    }, 1500);
+
+    } catch (error) {
+      console.error('Error submitting registration:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit registration. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
